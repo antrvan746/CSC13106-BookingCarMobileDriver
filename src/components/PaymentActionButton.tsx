@@ -15,7 +15,7 @@ export class PaymentActionButton extends Component {
         </TouchableOpacity>
         <TouchableOpacity onPress={this.handlePress}>
           <View style={styles.acceptButton}>
-            <Text style={[styles.acceptText]}>Đã đến</Text>
+            <Text style={[styles.acceptText]}>Tiến hành</Text>
           </View>
         </TouchableOpacity>
       </View>

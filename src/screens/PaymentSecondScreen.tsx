@@ -5,7 +5,8 @@ import React, {Component} from 'react';
 import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
 import PaymentActionButton from '../components/PaymentActionButton';
-
+import PaymentTotalCost from '../components/PaymentTotalCost';
+import PaymentNote from '../components/PaymentNote';
 export class PaymentSecondScreen extends Component {
   render() {
     return (
@@ -15,6 +16,12 @@ export class PaymentSecondScreen extends Component {
         </View>
         <View style={styles.paymentRiderInforComponent}>
           <PaymentRiderInfor />
+        </View>
+        <View style={styles.totalCostComponent}>
+          <PaymentTotalCost />
+        </View>
+        <View style={styles.paymentNoteComponent}>
+          <PaymentNote />
         </View>
         <View style={styles.buttonWrapper}>
           <PaymentActionButton />
@@ -42,6 +49,14 @@ const styles = StyleSheet.create({
     right: 0,
     left: 0,
     marginBottom: 50,
+  },
+  totalCostComponent: {
+    paddingHorizontal: 15,
+    marginTop: 10,
+  },
+  paymentNoteComponent: {
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
 
