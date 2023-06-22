@@ -10,7 +10,6 @@ import StatusBar from '../components/StatusBar';
 import StatusButton from '../components/StatusButton';
 import UserAvatar from '../components/UserAvatar';
 import NavigationBar from '../components/NavigationBar';
-// const GOOGLE_MAPS_API_KEY = 'AIzaSyBTf-fEmXSSLMBIPg_kq9Gbr6AkGhOP0hY';
 
 const MainScreen = () => {
   const [status, setStatus] = useState('offline');

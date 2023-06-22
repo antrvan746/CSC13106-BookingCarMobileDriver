@@ -8,14 +8,15 @@ export class DrivingStatus extends Component {
       <View style={styles.statusWrapper}>
         <View style={styles.locationInfor}>
           <Text>DrivingStatus</Text>
-          <Text>DrivingStatus</Text>
+          <Text>Địa điểm</Text>
         </View>
         <View style={styles.stepInfor}>
-          <Text>DrivingStatus</Text>
+          <Text>1 • Đón khách</Text>
+          <Text>GrabBike</Text>
         </View>
         <View style={styles.nagivateButton}>
           <Text>DrivingStatus</Text>
-          <Text>DrivingStatus</Text>
+          <Text>Điều hướng</Text>
         </View>
       </View>
     );
@@ -29,12 +30,15 @@ const styles = StyleSheet.create({
   },
   locationInfor: {
     flexDirection: 'column',
+    alignItems: 'center',
   },
   stepInfor: {
     flexDirection: 'column',
+    alignItems: 'center',
   },
   nagivateButton: {
     flexDirection: 'column',
+    alignItems: 'center',
   },
 });
 

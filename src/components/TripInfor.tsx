@@ -26,25 +26,29 @@ export class TripInfor extends Component {
 const styles = StyleSheet.create({
   tripInforWrapper: {
     flexDirection: 'column',
-    fontSize: 13,
   },
   riderName: {
     color: '#2F2C2C',
+    fontSize: 15,
     fontWeight: '400',
   },
   location: {
     width: 230,
     color: '#2F2C2C',
+    fontSize: 15,
   },
   destination: {
     fontWeight: '700',
     color: '#2F2C2C',
+    fontSize: 15,
   },
   address: {
     color: '#2F2C2C',
+    fontSize: 15,
   },
   price: {
     color: '#2F2C2C',
+    fontSize: 15,
     fontWeight: '500',
   },
 });

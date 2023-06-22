@@ -44,9 +44,16 @@ const styles = StyleSheet.create({
     right: 0,
     alignSelf: 'center',
     flexDirection: 'column',
+    marginBottom: 20,
   },
-  drivingStatusComponent: {},
-  tripInforComponent: {},
+  drivingStatusComponent: {
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  tripInforComponent: {
+    paddingHorizontal: 15,
+    marginBottom: 5,
+  },
   tripButtonBarComponent: {},
   tripHandleButtonsComponent: {},
 });

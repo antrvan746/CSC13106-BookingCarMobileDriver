@@ -15,21 +15,19 @@ export class TripButtonBar extends Component {
       <View style={styles.tripButtonsWrapper}>
         <View style={styles.chat}>
           <TouchableOpacity onPress={this.handlePress}>
-            <View style={styles.logo_center}>
-              <View style={styles.icon}>
-                <Icon name="chat" color={'#2F2F2C'} size={24} />
+            <View style={styles.buttonWrapper}>
+              <View>
+                <Icon name="chat" color={'#2F2F2C'} size={26} />
               </View>
               <Text style={styles.text}>Chat</Text>
             </View>
           </TouchableOpacity>
         </View>
         <View style={styles.call}>
-          <TouchableOpacity
-            onPress={this.handlePress}
-            style={styles.servicesButton}>
-            <View style={styles.logo_center}>
-              <View style={styles.icon}>
-                <Icon name="phone" color={'#2F2F2C'} size={24} />
+          <TouchableOpacity onPress={this.handlePress}>
+            <View style={styles.buttonWrapper}>
+              <View>
+                <Icon name="phone" color={'#2F2F2C'} size={26} />
               </View>
               <Text style={styles.text} numberOfLines={2}>
                 Cuộc gọi miễn phí
@@ -38,12 +36,10 @@ export class TripButtonBar extends Component {
           </TouchableOpacity>
         </View>
         <View style={styles.helpCenter}>
-          <TouchableOpacity
-            onPress={this.handlePress}
-            style={styles.servicesButton}>
-            <View style={styles.logo_center}>
-              <View style={styles.icon}>
-                <Icon name="help" color={'#2F2F2C'} size={24} />
+          <TouchableOpacity onPress={this.handlePress}>
+            <View style={styles.buttonWrapper}>
+              <View>
+                <Icon name="help" color={'#2F2F2C'} size={26} />
               </View>
               <Text style={[styles.text]} numberOfLines={2}>
                 Trung tâm hỗ trợ
@@ -53,12 +49,10 @@ export class TripButtonBar extends Component {
         </View>
 
         <View style={styles.more}>
-          <TouchableOpacity
-            onPress={this.handlePress}
-            style={styles.servicesButton}>
-            <View style={styles.logo_center}>
-              <View style={styles.icon}>
-                <Icon name="more-horiz" color={'#2F2F2C'} size={24} />
+          <TouchableOpacity onPress={this.handlePress}>
+            <View style={styles.buttonWrapper}>
+              <View>
+                <Icon name="more-horiz" color={'#2F2F2C'} size={26} />
               </View>
               <Text style={styles.text}>Xem thêm</Text>
             </View>
@@ -83,9 +77,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 80,
   },
-  servicesButton: {},
-
-  serviceText: {},
   call: {
     alignItems: 'center',
     width: 80,
@@ -106,13 +97,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#2F2F2C',
   },
-  logo_center: {
+  buttonWrapper: {
     alignItems: 'center',
-  },
-  icon: {
-    backgroundColor: '#E4E4E4',
-    borderRadius: 20,
-    padding: 5,
   },
 });
 
