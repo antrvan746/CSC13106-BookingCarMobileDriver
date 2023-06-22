@@ -15,6 +15,16 @@ const StatusButton = ({handlePress}) => {
           <Text style={[styles.statusText]}>Bật kết nối</Text>
         </View>
       </TouchableOpacity>
+      {/* <TouchableOpacity onPress={handlePress}>
+        <View style={styles.statusWrapper}>
+          <Animated.View style={[styles.iconWrapper, {left: online ? 0 : -50}]}>
+            <Icon name="power" size={32} color={iconColor} />
+          </Animated.View>
+          <Text style={[styles.statusText, {opacity: online ? 0 : 1}]}>
+            Bật kết nối
+          </Text>
+        </View>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -46,6 +56,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 50,
   },
+  iconWrapper: {},
 });
 
 export default StatusButton;
