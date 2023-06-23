@@ -8,7 +8,7 @@ export class TripHandleButtons extends Component {
     buttonText: 'Đã đến',
   };
 
-  handlePress = () => {
+  handleRidingStatePress = () => {
     const {buttonText} = this.state;
     let newButtonText = '';
 
@@ -23,13 +23,17 @@ export class TripHandleButtons extends Component {
     this.setState({buttonText: newButtonText});
   };
 
+  handleOffButtonPress = () => {
+    // handle off button
+  };
+
   render() {
     const {buttonText} = this.state;
 
     return (
       <View style={styles.wrapper}>
         <View style={styles.stateButtonWrapper}>
-          <TouchableOpacity onPress={this.handlePress}>
+          <TouchableOpacity onPress={this.handleRidingStatePress}>
             <View style={styles.tripState}>
               <Text style={[styles.stateText]}>{buttonText}</Text>
             </View>
@@ -37,7 +41,7 @@ export class TripHandleButtons extends Component {
         </View>
 
         <View style={styles.offButtonWrapper}>
-          <TouchableOpacity onPress={this.handlePress}>
+          <TouchableOpacity onPress={this.handleOffButtonPress}>
             <View style={styles.offButton}>
               <Icon name="power" size={28} color={'#F9F9F9'} />
             </View>
