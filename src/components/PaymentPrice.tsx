@@ -2,9 +2,17 @@
 import {Text, View, StyleSheet, TextInput} from 'react-native';
 import React, {Component} from 'react';
 
-export class PaymentPrice extends Component {
-  handlePress = () => {};
+interface PaymentPriceProps {
+  screen: string;
+}
+
+export class PaymentPrice extends Component<PaymentPriceProps> {
   render() {
+    const {screen} = this.props;
+    const tollsInputBackgroundColor =
+      screen === 'PaymentFirstScreen' ? '#48505F' : 'transparent';
+    const extraFeeInputBackgroundColor =
+      screen === 'PaymentFirstScreen' ? '#48505F' : 'transparent';
     return (
       <View style={styles.wrapper}>
         <View style={styles.priceWrapper}>
@@ -18,18 +26,28 @@ export class PaymentPrice extends Component {
         <View style={styles.tollsWrapper}>
           <Text style={[styles.text]}>Phí cầu đường</Text>
           <TextInput
-            style={[styles.text, styles.inputFee]}
+            style={[
+              styles.text,
+              styles.inputFee,
+              {backgroundColor: tollsInputBackgroundColor},
+            ]}
             placeholder="Số tiền"
-            keyboardType="numeric">
+            keyboardType="numeric"
+            editable={screen === 'PaymentFirstScreen'}>
             5.000đ
           </TextInput>
         </View>
         <View style={styles.extraFeeInputWrapper}>
           <Text style={[styles.text]}>Phụ phí</Text>
           <TextInput
-            style={[styles.text, styles.inputFee]}
+            style={[
+              styles.text,
+              styles.inputFee,
+              {backgroundColor: extraFeeInputBackgroundColor},
+            ]}
             placeholder="Số tiền"
-            keyboardType="numeric">
+            keyboardType="numeric"
+            editable={screen === 'PaymentFirstScreen'}>
             8.000đ
           </TextInput>
         </View>
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   inputFee: {
-    backgroundColor: '#48505F',
+    // backgroundColor: '#48505F',
     textAlign: 'right',
     fontSize: 16,
     width: 170,

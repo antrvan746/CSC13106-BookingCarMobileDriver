@@ -5,6 +5,7 @@ import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
 import PaymentSuccessButton from '../components/PaymentSuccessButton';
 import PaymentFailButton from '../components/PaymentFailButton';
+import PaymentPrice from '../components/PaymentPrice';
 
 export class PaymentFirstScreen extends Component {
   handleCancel = () => {
@@ -23,6 +24,9 @@ export class PaymentFirstScreen extends Component {
         </View>
         <View style={styles.paymentRiderInforComponent}>
           <PaymentRiderInfor />
+          <View style={styles.paymentInforComponent}>
+            <PaymentPrice screen="PaymentFirstScreen" />
+          </View>
         </View>
         <View style={styles.buttonWrapper}>
           <PaymentFailButton text="Huỷ" onPress={this.handleCancel} />
@@ -58,6 +62,9 @@ const styles = StyleSheet.create({
     right: 0,
     left: 0,
     marginBottom: 50,
+  },
+  paymentInforComponent: {
+    // paddingHorizontal: 15,
   },
 });
 

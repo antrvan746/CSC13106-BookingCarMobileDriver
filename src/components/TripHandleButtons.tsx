@@ -4,17 +4,34 @@ import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 
 export class TripHandleButtons extends Component {
+  state = {
+    buttonText: 'Đã đến',
+  };
+
   handlePress = () => {
-    // Handle button press
+    const {buttonText} = this.state;
+    let newButtonText = '';
+
+    if (buttonText === 'Đã đến') {
+      newButtonText = 'Đã đón';
+    } else if (buttonText === 'Đã đón') {
+      newButtonText = 'Đã trả';
+    } else if (buttonText === 'Đã trả') {
+      newButtonText = 'Đã đến';
+    }
+
+    this.setState({buttonText: newButtonText});
   };
 
   render() {
+    const {buttonText} = this.state;
+
     return (
       <View style={styles.wrapper}>
         <View style={styles.stateButtonWrapper}>
           <TouchableOpacity onPress={this.handlePress}>
             <View style={styles.tripState}>
-              <Text style={[styles.stateText]}>Đã đến</Text>
+              <Text style={[styles.stateText]}>{buttonText}</Text>
             </View>
           </TouchableOpacity>
         </View>

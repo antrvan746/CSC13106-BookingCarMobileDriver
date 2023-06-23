@@ -10,8 +10,8 @@ function App() {
   return (
     <SafeAreaView style={styles.containerWrapper}>
       {/* <MainScreen /> */}
-      {/* <DrivingScreen /> */}
-      <PaymentFirstScreen />
+      <DrivingScreen />
+      {/* <PaymentFirstScreen /> */}
       {/* <PaymentSecondScreen /> */}
       {/* <PaymentCongratsScreen /> */}
     </SafeAreaView>

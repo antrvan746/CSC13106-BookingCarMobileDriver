@@ -2,7 +2,6 @@
 import {Text, View, StyleSheet} from 'react-native';
 import React, {Component} from 'react';
 import PaymentMethod from './PaymentMethod';
-import PaymentPrice from './PaymentPrice';
 
 export class PaymentRiderInfor extends Component {
   render() {
@@ -12,7 +11,6 @@ export class PaymentRiderInfor extends Component {
           <Text style={styles.riderName}>Nguyễn Ngọc Anh Thư</Text>
           <PaymentMethod />
         </View>
-        <PaymentPrice />
       </View>
     );
   }

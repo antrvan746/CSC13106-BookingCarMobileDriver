@@ -8,6 +8,7 @@ import PaymentTotalCost from '../components/PaymentTotalCost';
 import PaymentNote from '../components/PaymentNote';
 import PaymentFailButton from '../components/PaymentFailButton';
 import PaymentSuccessButton from '../components/PaymentSuccessButton';
+import PaymentPrice from '../components/PaymentPrice';
 
 export class PaymentSecondScreen extends Component {
   handleEdit = () => {
@@ -26,6 +27,9 @@ export class PaymentSecondScreen extends Component {
         </View>
         <View style={styles.paymentRiderInforComponent}>
           <PaymentRiderInfor />
+        </View>
+        <View style={styles.paymentInforComponent}>
+          <PaymentPrice screen="PaymentSecondScreen" />
         </View>
         <View style={styles.totalCostComponent}>
           <PaymentTotalCost />
@@ -72,6 +76,9 @@ const styles = StyleSheet.create({
   paymentNoteComponent: {
     alignItems: 'center',
     marginTop: 20,
+  },
+  paymentInforComponent: {
+    paddingHorizontal: 15,
   },
 });
 
