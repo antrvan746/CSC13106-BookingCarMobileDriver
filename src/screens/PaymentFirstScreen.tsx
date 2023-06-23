@@ -3,8 +3,18 @@ import {View, StyleSheet} from 'react-native';
 import React, {Component} from 'react';
 import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
-import PaymentActionButton from '../components/PaymentActionButton';
+import PaymentSuccessButton from '../components/PaymentSuccessButton';
+import PaymentFailButton from '../components/PaymentFailButton';
+
 export class PaymentFirstScreen extends Component {
+  handleCancel = () => {
+    // Handle cancel action
+  };
+
+  handleContinue = () => {
+    // Handle cancel action
+  };
+
   render() {
     return (
       <View style={styles.wrapper}>
@@ -15,7 +25,11 @@ export class PaymentFirstScreen extends Component {
           <PaymentRiderInfor />
         </View>
         <View style={styles.buttonWrapper}>
-          <PaymentActionButton />
+          <PaymentFailButton text="Huỷ" onPress={this.handleCancel} />
+          <PaymentSuccessButton
+            text="Tiến hành"
+            onPress={this.handleContinue}
+          />
         </View>
       </View>
     );
@@ -35,6 +49,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   buttonWrapper: {
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     position: 'absolute',
     bottom: 0,
     right: 0,

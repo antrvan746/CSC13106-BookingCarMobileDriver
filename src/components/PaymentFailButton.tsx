@@ -2,20 +2,20 @@
 import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {Component} from 'react';
 
-export class PaymentActionButton extends Component {
-  handlePress = () => {};
+interface ButtonProps {
+  text: string;
+  onPress: () => void;
+}
 
+export class PaymentFailButton extends Component<ButtonProps> {
   render() {
+    const {text, onPress} = this.props;
+
     return (
       <View style={styles.buttonWrapper}>
-        <TouchableOpacity onPress={this.handlePress}>
+        <TouchableOpacity onPress={onPress}>
           <View style={styles.cancleButton}>
-            <Text style={[styles.cancelText]}>Huỷ</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.handlePress}>
-          <View style={styles.acceptButton}>
-            <Text style={[styles.acceptText]}>Tiến hành</Text>
+            <Text style={[styles.cancelText]}>{text}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentActionButton;
+export default PaymentFailButton;

@@ -4,10 +4,20 @@ import {View, StyleSheet} from 'react-native';
 import React, {Component} from 'react';
 import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
-import PaymentActionButton from '../components/PaymentActionButton';
 import PaymentTotalCost from '../components/PaymentTotalCost';
 import PaymentNote from '../components/PaymentNote';
+import PaymentFailButton from '../components/PaymentFailButton';
+import PaymentSuccessButton from '../components/PaymentSuccessButton';
+
 export class PaymentSecondScreen extends Component {
+  handleEdit = () => {
+    // Handle cancel action
+  };
+
+  handleConfirm = () => {
+    // Handle cancel action
+  };
+
   render() {
     return (
       <View style={styles.wrapper}>
@@ -24,7 +34,8 @@ export class PaymentSecondScreen extends Component {
           <PaymentNote />
         </View>
         <View style={styles.buttonWrapper}>
-          <PaymentActionButton />
+          <PaymentFailButton text="Chỉnh sửa" onPress={this.handleEdit} />
+          <PaymentSuccessButton text="Xác nhận" onPress={this.handleConfirm} />
         </View>
       </View>
     );
@@ -44,6 +55,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   buttonWrapper: {
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     position: 'absolute',
     bottom: 0,
     right: 0,

@@ -11,9 +11,9 @@ function App() {
     <SafeAreaView style={styles.containerWrapper}>
       {/* <MainScreen /> */}
       {/* <DrivingScreen /> */}
-      {/* <PaymentFirstScreen /> */}
+      <PaymentFirstScreen />
       {/* <PaymentSecondScreen /> */}
-      <PaymentCongratsScreen />
+      {/* <PaymentCongratsScreen /> */}
     </SafeAreaView>
   );
 }
