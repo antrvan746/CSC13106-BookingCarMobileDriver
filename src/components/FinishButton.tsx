@@ -1,20 +1,18 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
 
-export class FinishButton extends Component {
-  handlePress = () => {};
-  render() {
-    return (
-      <View style={styles.wrapper}>
-        <TouchableOpacity onPress={this.handlePress}>
-          <View style={styles.finishButton}>
-            <Text style={[styles.finishText]}>Xong</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+
+const FinishButton = ({ handlePress }) => {
+  return (
+    <View style={styles.wrapper}>
+      <TouchableOpacity onPress={handlePress}>
+        <View style={styles.finishButton}>
+          <Text style={[styles.finishText]}>Xong</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

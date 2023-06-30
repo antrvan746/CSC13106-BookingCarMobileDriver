@@ -1,56 +1,50 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 
-export class TripHandleButtons extends Component {
-  state = {
-    buttonText: 'Đã đến',
-  };
+// Redux
+import { useAppSelector } from '../redux/hook';
+import { selectDrivingScreenState } from '../redux/DrivingScreen';
 
-  handleRidingStatePress = () => {
-    const {buttonText} = this.state;
-    let newButtonText = '';
 
-    if (buttonText === 'Đã đến') {
-      newButtonText = 'Đã đón';
-    } else if (buttonText === 'Đã đón') {
-      newButtonText = 'Đã trả';
-    } else if (buttonText === 'Đã trả') {
-      newButtonText = 'Đã đến';
-    }
-
-    this.setState({buttonText: newButtonText});
-  };
-
-  handleOffButtonPress = () => {
+const TripHandleButtons = ({ buttonText, handlePress }) => {
+  const handleOffButtonPress = () => {
     // handle off button
   };
+  const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
-  render() {
-    const {buttonText} = this.state;
-
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.stateButtonWrapper}>
-          <TouchableOpacity onPress={this.handleRidingStatePress}>
-            <View style={styles.tripState}>
-              <Text style={[styles.stateText]}>{buttonText}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.offButtonWrapper}>
-          <TouchableOpacity onPress={this.handleOffButtonPress}>
-            <View style={styles.offButton}>
-              <Icon name="power" size={28} color={'#F9F9F9'} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
+  if (drivingScreenState.state === 'Arriving') {
+    buttonText = 'Đã đến';
+  } else if (drivingScreenState.state === 'Arrived') {
+    buttonText = 'Đã đón';
+  } else if (drivingScreenState.state === 'Carrying') {
+    buttonText = 'Đã trả';
+  } else if (drivingScreenState.state === 'Finished') {
+    buttonText = 'Đã đến';
   }
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.stateButtonWrapper}>
+        <TouchableOpacity onPress={handlePress}>
+          <View style={styles.tripState}>
+            <Text style={[styles.stateText]}>{buttonText}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.offButtonWrapper}>
+        <TouchableOpacity onPress={handleOffButtonPress}>
+          <View style={styles.offButton}>
+            <Icon name="power" size={28} color={'#F9F9F9'} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
+
 
 const styles = StyleSheet.create({
   wrapper: {

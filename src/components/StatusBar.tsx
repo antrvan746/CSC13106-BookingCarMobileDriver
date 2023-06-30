@@ -2,20 +2,20 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/self-closing-comp */
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
 interface StatusTextProps {
   status: string;
 }
 
-const StatusBar: React.FC<StatusTextProps> = ({status}) => {
+const StatusBar: React.FC<StatusTextProps> = ({ status }) => {
   const iconColor = status === 'online' ? '#13B45D' : '#E50101';
   return (
     <View style={styles.statusView}>
       <Icon name="circle" color={iconColor} size={16} />
       <Text style={styles.statusText}>
-        Bạn đang {status === 'online' ? 'online' : 'offline'}.
+        Bạn đang {status}.
       </Text>
     </View>
   );

@@ -1,36 +1,51 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable prettier/prettier */
-import {View, StyleSheet, Image, Text} from 'react-native';
-import React, {Component} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { View, StyleSheet, Image, Text } from 'react-native';
+import React from 'react';
 import PaymentCongratsHeader from '../components/PaymentCongratsHeader';
 import PaymentMethod from '../components/PaymentMethod';
 import FinishButton from '../components/FinishButton';
-export class PaymentCongratsScreen extends Component {
-  render() {
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.paymentCongratsHeader}>
-          <PaymentCongratsHeader />
-        </View>
-        <View style={styles.congratsImgWrapper}>
-          <Image
-            source={require('../assets/images/congrats.png')} // Replace with your image path
-            style={styles.congratsImg}
-          />
-        </View>
-        <View style={styles.revenueWrapper}>
-          <Text style={styles.revenueTitleText}>Thu nhập ròng</Text>
-          <Text style={styles.revenueContentText}>139.000đ</Text>
-          <View style={styles.paymentMethodComponent}>
-            <PaymentMethod />
-          </View>
-        </View>
-        <View style={styles.finishButtonComponent}>
-          <FinishButton />
+
+// Navigations
+import { RootStackParamList } from '../../App';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
+
+type PaymentCongratsScreenRouteProp = RouteProp<RootStackParamList, 'CongratsPayment'>;
+type PaymentCongratsScreenNavigationProp = NavigationProp<RootStackParamList, 'CongratsPayment'>;
+
+type PaymentScreenProps = {
+  route: PaymentCongratsScreenRouteProp;
+  navigation: PaymentCongratsScreenNavigationProp;
+};
+
+const PaymentCongratsScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
+  const handleFinishTripButtonPress = () => {
+    navigation.navigate('Main');
+  }
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.paymentCongratsHeader}>
+        <PaymentCongratsHeader />
+      </View>
+      <View style={styles.congratsImgWrapper}>
+        <Image
+          source={require('../assets/images/congrats.png')} // Replace with your image path
+          style={styles.congratsImg}
+        />
+      </View>
+      <View style={styles.revenueWrapper}>
+        <Text style={styles.revenueTitleText}>Thu nhập ròng</Text>
+        <Text style={styles.revenueContentText}>139.000đ</Text>
+        <View style={styles.paymentMethodComponent}>
+          <PaymentMethod />
         </View>
       </View>
-    );
-  }
+      <View style={styles.finishButtonComponent}>
+        <FinishButton handlePress={handleFinishTripButtonPress} />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
