@@ -13,10 +13,14 @@ import TripHandleButtons from '../components/TripHandleButtons';
 // import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
+import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+
 
 type DrivingScreenRouteProp = RouteProp<RootStackParamList, 'Driving'>;
 type DrivingScreenNavigationProp = NavigationProp<RootStackParamList, 'Driving'>;
@@ -30,6 +34,10 @@ const DrivingScreen = ({ navigation, route }: DrivingScreenProps): JSX.Element =
   const { tripId } = route.params;
   let buttonText = 'Đã đến';
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
+  const paymentScreenState = useAppSelector(selectPaymentScreenState);
+  const mainScreenState = useAppSelector(selectMainScreenState);
+
+
   const dispatch = useAppDispatch();
 
   const handleTripStateButtonPress = () => {
@@ -42,10 +50,22 @@ const DrivingScreen = ({ navigation, route }: DrivingScreenProps): JSX.Element =
     } else if (drivingScreenState.state === 'Carrying') {
       buttonText = 'Đã đến';
       dispatch(setDrivingScreenState({ state: 'Finished' }));
+      dispatch(setDrivingScreenState({ state: 'Arriving' }));
+      dispatch(setPaymentScreenState({ state: 'InProgress' }));
       navigation.navigate('Payment', { paymentId: '1238721267' });
     }
+    // else if (drivingScreenState.state === 'Finished') {
+    //   dispatch(setDrivingScreenState({ state: 'Arriving' }));
+    // }
   };
 
+  const handleOffButtonPress = () => {
+    dispatch(setMainScreenState({ state: 'Unavailable' }));
+    // TODO: it needs to replace current screen by the Main screen
+    // navigation.replace('Main');
+    dispatch(setDrivingScreenState({ state: 'Arriving' }));
+    navigation.navigate('Main');
+  };
 
   return (
     <View style={styles.containerWrapper}>
@@ -65,7 +85,7 @@ const DrivingScreen = ({ navigation, route }: DrivingScreenProps): JSX.Element =
           <TripButtonBar />
         </View>
         <View style={styles.tripHandleButtonsComponent}>
-          <TripHandleButtons buttonText={buttonText} handlePress={handleTripStateButtonPress} />
+          <TripHandleButtons buttonText={buttonText} handleTripState={handleTripStateButtonPress} handleOffState={handleOffButtonPress} />
         </View>
       </View>
     </View>

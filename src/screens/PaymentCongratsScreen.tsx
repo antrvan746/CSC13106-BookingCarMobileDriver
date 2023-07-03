@@ -20,6 +20,7 @@ type PaymentScreenProps = {
 
 const PaymentCongratsScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
   const handleFinishTripButtonPress = () => {
+    // TODO: it needs to replace current screen by the Main screen
     navigation.navigate('Main');
   }
 

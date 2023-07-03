@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable prettier/prettier */
-import {View, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
 import PaymentTotalCost from '../components/PaymentTotalCost';
@@ -29,7 +29,7 @@ export class PaymentSecondScreen extends Component {
           <PaymentRiderInfor />
         </View>
         <View style={styles.paymentInforComponent}>
-          <PaymentPrice screen="PaymentSecondScreen" />
+          <PaymentPrice state="PaymentSecondScreen" />
         </View>
         <View style={styles.totalCostComponent}>
           <PaymentTotalCost />
@@ -38,8 +38,8 @@ export class PaymentSecondScreen extends Component {
           <PaymentNote />
         </View>
         <View style={styles.buttonWrapper}>
-          <PaymentFailButton text="Chỉnh sửa" onPress={this.handleEdit} />
-          <PaymentSuccessButton text="Xác nhận" onPress={this.handleConfirm} />
+          <PaymentFailButton state="Chỉnh sửa" onPress={this.handleEdit} />
+          <PaymentSuccessButton state="Xác nhận" onPress={this.handleConfirm} />
         </View>
       </View>
     );

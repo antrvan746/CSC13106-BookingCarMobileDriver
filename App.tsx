@@ -11,8 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Screens
 import MainScreen from './src/screens/MainScreen';
 import DrivingScreen from './src/screens/DrivingScreen';
-import PaymentFirstScreen from './src/screens/PaymentFirstScreen';
-import PaymentSecondScreen from './src/screens/PaymentSecondScreen';
+import PaymentScreen from './src/screens/PaymentScreen';
 import PaymentCongratsScreen from './src/screens/PaymentCongratsScreen';
 import { Provider } from 'react-redux';
 import ReduxStore from './src/redux/store';
@@ -45,7 +44,7 @@ function App(): JSX.Element {
 
           <Stack.Screen
             name="Payment"
-            component={PaymentFirstScreen} />
+            component={PaymentScreen} />
 
           <Stack.Screen
             name="CongratsPayment"

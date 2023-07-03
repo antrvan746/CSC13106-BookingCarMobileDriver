@@ -1,26 +1,30 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 
-interface ButtonProps {
-  text: string;
-  onPress: () => void;
-}
+// Redux
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
 
-export class PaymentSuccessButton extends Component<ButtonProps> {
-  render() {
-    const {text, onPress} = this.props;
 
-    return (
-      <View style={styles.buttonWrapper}>
-        <TouchableOpacity onPress={onPress}>
-          <View style={styles.acceptButton}>
-            <Text style={[styles.acceptText]}>{text}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
+const PaymentSuccessButton = ({ state, onPress }) => {
+  const paymentScreenState = useAppSelector(selectPaymentScreenState);
+  let buttonText = '';
+  if (paymentScreenState.state === 'InProgress') {
+    buttonText = 'Tiến Hành';
+  } else if (paymentScreenState.state === 'Confirming') {
+    buttonText = 'Xác nhận';
   }
+  return (
+    <View style={styles.buttonWrapper}>
+      <TouchableOpacity onPress={onPress}>
+        <View style={styles.acceptButton}>
+          <Text style={[styles.acceptText]}>{buttonText}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -13,6 +13,14 @@ import PaymentPrice from '../components/PaymentPrice';
 import { RootStackParamList } from '../../App';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 
+
+// Redux
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+import PaymentTotalCost from '../components/PaymentTotalCost';
+import PaymentNote from '../components/PaymentNote';
+
+
 type PaymentScreenRouteProp = RouteProp<RootStackParamList, 'Payment'>;
 type PaymentScreenNavigationProp = NavigationProp<RootStackParamList, 'Payment'>;
 
@@ -21,18 +29,29 @@ type PaymentScreenProps = {
   navigation: PaymentScreenNavigationProp;
 };
 
-const PaymentFirstScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
+const PaymentScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
+  // Handle cancel action
   const handleCancel = () => {
-    // Handle cancel action
-    navigation.navigate('Driving', { tripId: '123' });
+    if (paymentScreenState.state === 'InProgress') {
+      navigation.navigate('Driving', { tripId: '123' });
+    } else if (paymentScreenState.state === 'Confirming') {
+      dispatch(setPaymentScreenState({ state: 'InProgress' }));
+    }
   };
 
+  // Handle continue action
   const handleContinue = () => {
-    // Handle continue action
-    navigation.navigate('CongratsPayment', { paymentId: '1238721267' });
+    if (paymentScreenState.state === 'InProgress') {
+      dispatch(setPaymentScreenState({ state: 'Confirming' }));
+    } else if (paymentScreenState.state === 'Confirming') {
+      navigation.navigate('CongratsPayment', { paymentId: '1238721267' });
+    }
   };
 
   const { paymentId } = route.params;
+
+  const paymentScreenState = useAppSelector(selectPaymentScreenState);
+  const dispatch = useAppDispatch();
 
   return (
     <View style={styles.wrapper}>
@@ -42,14 +61,22 @@ const PaymentFirstScreen = ({ navigation, route }: PaymentScreenProps): JSX.Elem
       <View style={styles.paymentRiderInforComponent}>
         <PaymentRiderInfor />
         <View style={styles.paymentInforComponent}>
-          <PaymentPrice screen="PaymentFirstScreen" />
+          <PaymentPrice state={paymentScreenState.state} />
           <Text>Payment ID: {paymentId}</Text>
+          <Text>State: {paymentScreenState.state}</Text>
         </View>
+        {paymentScreenState.state !== 'InProgress' && (
+          <><View style={styles.totalCostComponent}>
+            <PaymentTotalCost />
+          </View><View style={styles.paymentNoteComponent}>
+              <PaymentNote />
+            </View></>
+        )}
       </View>
       <View style={styles.buttonWrapper}>
-        <PaymentFailButton text="Huỷ" onPress={handleCancel} />
+        <PaymentFailButton state={paymentScreenState.state} onPress={handleCancel} />
         <PaymentSuccessButton
-          text="Tiến hành"
+          state={paymentScreenState.state}
           onPress={handleContinue}
         />
       </View>
@@ -83,6 +110,13 @@ const styles = StyleSheet.create({
   paymentInforComponent: {
     // paddingHorizontal: 15,
   },
+  totalCostComponent: {
+    marginTop: 10,
+  },
+  paymentNoteComponent: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
 });
 
-export default PaymentFirstScreen;
+export default PaymentScreen;

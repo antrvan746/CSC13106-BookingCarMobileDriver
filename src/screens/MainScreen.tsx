@@ -3,8 +3,8 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/self-closing-comp */
 import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, View } from 'react-native';
-// import MapView, {Marker} from 'react-native-maps';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import MapView from 'react-native-maps';
 
 // Componenents
 import Revenue from '../components/Revenue';
@@ -50,7 +50,6 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
         <Revenue />
         <UserAvatar />
       </View>
-
       <View style={styles.secondWrapper}>
         <View style={styles.buttonWrapper}>
           <View

@@ -1,59 +1,62 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, StyleSheet, TextInput} from 'react-native';
-import React, {Component} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Text, View, StyleSheet, TextInput } from 'react-native';
+import React, { Component } from 'react';
+
+// Redux
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+
 
 interface PaymentPriceProps {
-  screen: string;
+  state: string;
 }
 
-export class PaymentPrice extends Component<PaymentPriceProps> {
-  render() {
-    const {screen} = this.props;
-    const tollsInputBackgroundColor =
-      screen === 'PaymentFirstScreen' ? '#48505F' : 'transparent';
-    const extraFeeInputBackgroundColor =
-      screen === 'PaymentFirstScreen' ? '#48505F' : 'transparent';
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.priceWrapper}>
-          <Text style={[styles.text]}>Giá cố định</Text>
-          <Text style={[styles.text]}>125.000đ</Text>
-        </View>
-        <View style={styles.feeWrapper}>
-          <Text style={[styles.text]}>Phụ phí</Text>
-          <Text style={[styles.text]}>1.000đ</Text>
-        </View>
-        <View style={styles.tollsWrapper}>
-          <Text style={[styles.text]}>Phí cầu đường</Text>
-          <TextInput
-            style={[
-              styles.text,
-              styles.inputFee,
-              {backgroundColor: tollsInputBackgroundColor},
-            ]}
-            placeholder="Số tiền"
-            keyboardType="numeric"
-            editable={screen === 'PaymentFirstScreen'}>
-            5.000đ
-          </TextInput>
-        </View>
-        <View style={styles.extraFeeInputWrapper}>
-          <Text style={[styles.text]}>Phụ phí</Text>
-          <TextInput
-            style={[
-              styles.text,
-              styles.inputFee,
-              {backgroundColor: extraFeeInputBackgroundColor},
-            ]}
-            placeholder="Số tiền"
-            keyboardType="numeric"
-            editable={screen === 'PaymentFirstScreen'}>
-            8.000đ
-          </TextInput>
-        </View>
+const PaymentPrice = ({ state }: PaymentPriceProps): JSX.Element => {
+  const tollsInputBackgroundColor =
+    state === 'InProgress' ? '#48505F' : 'transparent';
+  const extraFeeInputBackgroundColor =
+    state === 'InProgress' ? '#48505F' : 'transparent';
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.priceWrapper}>
+        <Text style={[styles.text]}>Giá cố định</Text>
+        <Text style={[styles.text]}>125.000đ</Text>
       </View>
-    );
-  }
+      <View style={styles.feeWrapper}>
+        <Text style={[styles.text]}>Phụ phí</Text>
+        <Text style={[styles.text]}>1.000đ</Text>
+      </View>
+      <View style={styles.tollsWrapper}>
+        <Text style={[styles.text]}>Phí cầu đường</Text>
+        <TextInput
+          style={[
+            styles.text,
+            styles.inputFee,
+            { backgroundColor: tollsInputBackgroundColor },
+          ]}
+          placeholder="Số tiền"
+          keyboardType="numeric"
+          editable={state === 'InProgress'}>
+          5.000đ
+        </TextInput>
+      </View>
+      <View style={styles.extraFeeInputWrapper}>
+        <Text style={[styles.text]}>Phụ phí</Text>
+        <TextInput
+          style={[
+            styles.text,
+            styles.inputFee,
+            { backgroundColor: extraFeeInputBackgroundColor },
+          ]}
+          placeholder="Số tiền"
+          keyboardType="numeric"
+          editable={state === 'InProgress'}>
+          8.000đ
+        </TextInput>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

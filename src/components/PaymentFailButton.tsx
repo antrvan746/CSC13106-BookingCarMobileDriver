@@ -1,26 +1,32 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-interface ButtonProps {
-  text: string;
-  onPress: () => void;
-}
 
-export class PaymentFailButton extends Component<ButtonProps> {
-  render() {
-    const {text, onPress} = this.props;
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
 
-    return (
-      <View style={styles.buttonWrapper}>
-        <TouchableOpacity onPress={onPress}>
-          <View style={styles.cancleButton}>
-            <Text style={[styles.cancelText]}>{text}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
+// Redux
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+
+
+const PaymentFailButton = ({ state, onPress }) => {
+  const paymentScreenState = useAppSelector(selectPaymentScreenState);
+  let buttonText = '';
+  if (paymentScreenState.state === 'InProgress') {
+    buttonText = 'Huỷ';
+  } else if (paymentScreenState.state === 'Confirming') {
+    buttonText = 'Chỉnh sửa';
   }
+  return (
+    <View style={styles.buttonWrapper}>
+      <TouchableOpacity onPress={onPress}>
+        <View style={styles.cancleButton}>
+          <Text style={[styles.cancelText]}>{buttonText}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

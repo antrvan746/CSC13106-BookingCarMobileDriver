@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Feather';
@@ -7,11 +8,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useAppSelector } from '../redux/hook';
 import { selectDrivingScreenState } from '../redux/DrivingScreen';
 
+const TripHandleButtons = ({ buttonText, handleTripState, handleOffState }) => {
 
-const TripHandleButtons = ({ buttonText, handlePress }) => {
-  const handleOffButtonPress = () => {
-    // handle off button
-  };
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
   if (drivingScreenState.state === 'Arriving') {
@@ -27,7 +25,7 @@ const TripHandleButtons = ({ buttonText, handlePress }) => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.stateButtonWrapper}>
-        <TouchableOpacity onPress={handlePress}>
+        <TouchableOpacity onPress={handleTripState}>
           <View style={styles.tripState}>
             <Text style={[styles.stateText]}>{buttonText}</Text>
           </View>
@@ -35,7 +33,7 @@ const TripHandleButtons = ({ buttonText, handlePress }) => {
       </View>
 
       <View style={styles.offButtonWrapper}>
-        <TouchableOpacity onPress={handleOffButtonPress}>
+        <TouchableOpacity onPress={handleOffState}>
           <View style={styles.offButton}>
             <Icon name="power" size={28} color={'#F9F9F9'} />
           </View>
