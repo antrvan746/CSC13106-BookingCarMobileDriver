@@ -19,17 +19,16 @@ import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
 import PaymentTotalCost from '../components/PaymentTotalCost';
 import PaymentNote from '../components/PaymentNote';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+interface Props extends NativeStackScreenProps<RootStackParamList, 'Payment'> {
 
-type PaymentScreenRouteProp = RouteProp<RootStackParamList, 'Payment'>;
-type PaymentScreenNavigationProp = NavigationProp<RootStackParamList, 'Payment'>;
+}
+const PaymentScreen = ({ navigation, route }: Props): JSX.Element => {
+  const { paymentId } = route.params;
+  const paymentScreenState = useAppSelector(selectPaymentScreenState);
+  const dispatch = useAppDispatch();
 
-type PaymentScreenProps = {
-  route: PaymentScreenRouteProp;
-  navigation: PaymentScreenNavigationProp;
-};
-
-const PaymentScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
   // Handle cancel action
   const handleCancel = () => {
     if (paymentScreenState.state === 'InProgress') {
@@ -47,11 +46,6 @@ const PaymentScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element =
       navigation.navigate('CongratsPayment', { paymentId: '1238721267' });
     }
   };
-
-  const { paymentId } = route.params;
-
-  const paymentScreenState = useAppSelector(selectPaymentScreenState);
-  const dispatch = useAppDispatch();
 
   return (
     <View style={styles.wrapper}>

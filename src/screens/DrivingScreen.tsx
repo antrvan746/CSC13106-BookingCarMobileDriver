@@ -10,7 +10,6 @@ import TripButtonBar from '../components/TripButtonBar';
 import TripHandleButtons from '../components/TripHandleButtons';
 
 // Navigations
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -21,22 +20,16 @@ import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
 
+interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> {
 
-type DrivingScreenRouteProp = RouteProp<RootStackParamList, 'Driving'>;
-type DrivingScreenNavigationProp = NavigationProp<RootStackParamList, 'Driving'>;
+}
 
-type DrivingScreenProps = {
-  route: DrivingScreenRouteProp;
-  navigation: DrivingScreenNavigationProp;
-};
-
-const DrivingScreen = ({ navigation, route }: DrivingScreenProps): JSX.Element => {
-  const { tripId } = route.params;
+const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
+  const tripId = route.params.tripId;
   let buttonText = 'Đã đến';
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
   const paymentScreenState = useAppSelector(selectPaymentScreenState);
   const mainScreenState = useAppSelector(selectMainScreenState);
-
 
   const dispatch = useAppDispatch();
 
@@ -61,10 +54,8 @@ const DrivingScreen = ({ navigation, route }: DrivingScreenProps): JSX.Element =
 
   const handleOffButtonPress = () => {
     dispatch(setMainScreenState({ state: 'Unavailable' }));
-    // TODO: it needs to replace current screen by the Main screen
-    // navigation.replace('Main');
     dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    navigation.navigate('Main');
+    navigation.replace('Main');
   };
 
   return (

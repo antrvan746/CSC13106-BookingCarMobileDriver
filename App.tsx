@@ -20,7 +20,6 @@ export type RootStackParamList = {
   Main: undefined;
   Driving: { tripId: string };
   Payment: { paymentId: string };
-  SecondPayment: { paymentId: string };
   CongratsPayment: { paymentId: string };
 }
 

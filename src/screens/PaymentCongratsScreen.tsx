@@ -8,20 +8,15 @@ import FinishButton from '../components/FinishButton';
 
 // Navigations
 import { RootStackParamList } from '../../App';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type PaymentCongratsScreenRouteProp = RouteProp<RootStackParamList, 'CongratsPayment'>;
-type PaymentCongratsScreenNavigationProp = NavigationProp<RootStackParamList, 'CongratsPayment'>;
+interface Props extends NativeStackScreenProps<RootStackParamList, 'CongratsPayment'> {
 
-type PaymentScreenProps = {
-  route: PaymentCongratsScreenRouteProp;
-  navigation: PaymentCongratsScreenNavigationProp;
-};
-
-const PaymentCongratsScreen = ({ navigation, route }: PaymentScreenProps): JSX.Element => {
+}
+const PaymentCongratsScreen = ({ navigation, route }: Props): JSX.Element => {
+  const { paymentId } = route.params;
   const handleFinishTripButtonPress = () => {
-    // TODO: it needs to replace current screen by the Main screen
-    navigation.navigate('Main');
+    navigation.replace('Main');
   }
 
   return (
