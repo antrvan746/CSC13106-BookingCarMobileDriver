@@ -11,7 +11,6 @@ import TripHandleButtons from '../components/TripHandleButtons';
 
 // Navigations
 import { RootStackParamList } from '../../App';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Redux

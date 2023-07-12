@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "548724143435",
+    "project_id": "callcabauthentication",
+    "storage_bucket": "callcabauthentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548724143435:android:8df49ff8c11dd976d024ce",
+        "android_client_info": {
+          "package_name": "com.callcabdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "548724143435-vmtffv9q0ik71cokleibggqj4kvab8p0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbpQ42PZ0v8jyAz-YqdYqBIHtzEwe4HR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548724143435-vmtffv9q0ik71cokleibggqj4kvab8p0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

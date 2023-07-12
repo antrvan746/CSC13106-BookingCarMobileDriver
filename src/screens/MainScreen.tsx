@@ -42,6 +42,7 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
       state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
     }));
     navigation.replace('Driving', { tripId: '123' });
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
   return (

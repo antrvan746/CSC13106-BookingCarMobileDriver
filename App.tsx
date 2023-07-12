@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
+import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
 import DrivingScreen from './src/screens/DrivingScreen';
 import PaymentScreen from './src/screens/PaymentScreen';
@@ -17,6 +18,7 @@ import { Provider } from 'react-redux';
 import ReduxStore from './src/redux/store';
 
 export type RootStackParamList = {
+  Login: { accountPhoneNumber: string };
   Main: undefined;
   Driving: { tripId: string };
   Payment: { paymentId: string };
@@ -30,8 +32,12 @@ function App(): JSX.Element {
     <Provider store={ReduxStore}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Main"
+          initialRouteName="Login"
           screenOptions={{ headerShown: false }}>
+
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen} />
 
           <Stack.Screen
             name="Main"

@@ -9,10 +9,7 @@ import PaymentFailButton from '../components/PaymentFailButton';
 import PaymentPrice from '../components/PaymentPrice';
 
 // Navigations
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
-
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
