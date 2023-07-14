@@ -35,12 +35,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
         <View
           style={styles.titleWraper}>
           <Text style={styles.titleText}>
-            Discover Your Dream Job here
+            Welcome, CallCab Drivers!
           </Text>
 
           <Text style={styles.titleSubtext} >
-            Explore all the existing job roles based or your interest and study
-            major
+            Unlock New Opportunities, Drive with CallCab!
           </Text>
         </View>
         <View style={styles.buttonWrapper}>

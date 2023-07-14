@@ -37,14 +37,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProp
   // verification code (OTP - One-Time-Passcode)
   const [code, setCode] = useState('');
 
-  const mainScreenState = useAppSelector(selectMainScreenState);
+  // const mainScreenState = useAppSelector(selectMainScreenState);
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const handleScreenChange = () => {
-    dispatch(setMainScreenState({
-      state: mainScreenState.state === 'Available' ? 'Available' : 'Unavailable',
-    }));
+    // dispatch(setMainScreenState({
+    //   state: mainScreenState.state === 'Available' ? 'Available' : 'Unavailable',
+    // }));
     navigation.navigate('Main');
   };
 
@@ -118,7 +118,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProp
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('Main')}
+          onPress={handleScreenChange}
           style={styles.signInButton}>
           <Text style={styles.signInText}>
             Sign in

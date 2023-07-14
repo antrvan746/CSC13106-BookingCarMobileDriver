@@ -19,6 +19,7 @@ const AppTextInput: React.FC<TextInputProps> = ({ ...otherProps }) => {
   const [focused, setFocused] = useState<boolean>(false);
   return (
     <TextInput
+      keyboardType="numeric"
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       placeholderTextColor={Colors.darkText}
