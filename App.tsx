@@ -16,9 +16,12 @@ import PaymentScreen from './src/screens/PaymentScreen';
 import PaymentCongratsScreen from './src/screens/PaymentCongratsScreen';
 import { Provider } from 'react-redux';
 import ReduxStore from './src/redux/store';
+import WelcomeScreen from './src/screens/WelcomeScreen';
 
 export type RootStackParamList = {
-  Login: { accountPhoneNumber: string };
+  Welcome: undefined;
+  Register: undefined;
+  Login: undefined;
   Main: undefined;
   Driving: { tripId: string };
   Payment: { paymentId: string };
@@ -32,8 +35,12 @@ function App(): JSX.Element {
     <Provider store={ReduxStore}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Login"
+          initialRouteName="Welcome"
           screenOptions={{ headerShown: false }}>
+
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen} />
 
           <Stack.Screen
             name="Login"

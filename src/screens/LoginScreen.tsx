@@ -1,24 +1,37 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable eol-last */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from 'react';
-import { Button, TextInput } from 'react-native';
-import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
+/* eslint-disable react-native/no-inline-styles */
 
-import MainScreen from './MainScreen';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+
+} from 'react-native';
+import Spacing from '../constants/Spacing';
+import FontSize from '../constants/FontSize';
+import Colors from '../constants/Colors';
+import Font from '../constants/Font';
+import Icon from 'react-native-ionicons';
+import AppTextInput from '../components/AppTextInput';
+
+import React, { useState, useEffect } from 'react';
+import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
+type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
-import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 
-type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
-
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  // If null, no SMS has been sent
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProps) => {
   const [confirm, setConfirm] = useState<FBAuth.ConfirmationResult | null>(null);
 
   // verification code (OTP - One-Time-Passcode)
@@ -64,29 +77,171 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       return;
     }
     try {
-      await confirm.confirm('222222');
+      await confirm.confirm('123456');
 
     } catch (error) {
       console.log('Invalid code.');
     }
   }
 
-  if (!confirm) {
-    return (
-      <Button
-        title="Phone Number Sign In"
-        onPress={() => signInWithPhoneNumber('+1 222-222-2222')}
-      />
-    );
-  }
+  // if (!confirm) {
+  //   return (
+  //     <Button
+  //       title="Phone Number Sign In"
+  //       onPress={() => signInWithPhoneNumber('+1 123-455-6789')}
+  //     />
+  //   );
+  // }
 
   return (
-    <>
-      <TextInput value={code} onChangeText={text => setCode(text)} />
-      <Button title="Confirm Code" onPress={() => confirmCode()} />
-      <Button title="Change state" onPress={handleScreenChange} />
-    </>
+    <SafeAreaView>
+      <View style={styles.containerWrapper}>
+        <View style={{
+          alignItems: 'center',
+        }} >
+          <Text style={styles.titleText} >
+            Login here
+          </Text>
+          <Text style={styles.titleSubtext}>
+            Welcome back you've been missed!
+          </Text>
+        </View>
+        <View style={styles.inputWrapper}>
+          <AppTextInput placeholder="Phone number" />
+          <AppTextInput placeholder="OTP Code" />
+        </View>
+
+        <View>
+          <Text style={styles.forgotPwText}>
+            Forgot your password ?
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Main')}
+          style={styles.signInButton}>
+          <Text style={styles.signInText}>
+            Sign in
+          </Text>
+        </TouchableOpacity>
+        {/* TODO: Create Register Screen */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Welcome')}
+          style={styles.createNewAccButton}>
+          <Text style={styles.createNewAccText}>
+            Create new account
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.otherOptionsWrapper}>
+          <Text style={styles.continueText}>
+            Or continue with
+          </Text>
+
+          <View style={styles.otherIconsWrapper}>
+            <TouchableOpacity style={styles.iconTouchable}>
+              <Icon
+                name="logo-google"
+                color={Colors.brown}
+                size={Spacing * 2}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconTouchable}>
+              <Icon
+                name="logo-apple"
+                color={Colors.brown}
+                size={Spacing * 2}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconTouchable}>
+              <Icon
+                name="logo-facebook"
+                color={Colors.brown}
+                size={Spacing * 2}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
 export default LoginScreen;
+
+const styles = StyleSheet.create({
+  containerWrapper: {
+    padding: Spacing * 2,
+  },
+  titleText: {
+    fontSize: FontSize.xLarge,
+    fontWeight: '700',
+    color: Colors.primary,
+    fontFamily: Font['poppins-bold'],
+    marginVertical: Spacing * 3,
+  },
+  titleSubtext: {
+    fontFamily: Font['poppins-semiBold'],
+    fontSize: FontSize.large,
+    maxWidth: '60%',
+    textAlign: 'center',
+  },
+  inputWrapper: {
+    marginVertical: Spacing * 3,
+  },
+  forgotPwText: {
+    fontFamily: Font['poppins-semiBold'],
+    fontSize: FontSize.small,
+    color: Colors.primary,
+    alignSelf: 'flex-end',
+  },
+  signInButton: {
+    padding: Spacing * 2,
+    backgroundColor: Colors.primary,
+    marginVertical: Spacing * 3,
+    borderRadius: Spacing,
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: Spacing,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: Spacing,
+  },
+  signInText: {
+    fontFamily: Font['poppins-bold'],
+    color: Colors.white,
+    textAlign: 'center',
+    fontSize: FontSize.large,
+    fontWeight: '700',
+  },
+  createNewAccButton: {
+    padding: Spacing,
+  },
+  createNewAccText: {
+    fontFamily: Font['poppins-semiBold'],
+    color: Colors.text,
+    textAlign: 'center',
+    fontSize: FontSize.medium,
+  },
+  otherOptionsWrapper: {
+    marginVertical: Spacing * 3,
+  },
+  otherIconsWrapper: {
+    marginTop: Spacing,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  continueText: {
+    fontFamily: Font['poppins-semiBold'],
+    color: Colors.primary,
+    textAlign: 'center',
+    fontSize: FontSize.small,
+  },
+  iconTouchable: {
+    padding: Spacing,
+    backgroundColor: Colors.darkWhite,
+    borderRadius: Spacing / 2,
+    marginHorizontal: Spacing,
+  },
+});

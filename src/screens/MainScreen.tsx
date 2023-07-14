@@ -45,6 +45,16 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
     // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
+  const goToLoginScreen = () => {
+    navigation.replace('Login');
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+  };
+
+  const goToWelcomeScreen = () => {
+    navigation.replace('Welcome');
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+  };
+
   return (
     <View style={styles.containerWrapper}>
       <View style={styles.firstWrapper}>
@@ -71,6 +81,8 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
           <StatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
           <Text>{mainScreenState.state}</Text>
           <Button title="Change state" onPress={handleStateChange} />
+          <Button title="Login Screen" onPress={goToLoginScreen} />
+          <Button title="Welcome Screen" onPress={goToWelcomeScreen} />
           <View style={{ marginBottom: 5, marginTop: 5 }}></View>
           <NavigationBar />
         </View>

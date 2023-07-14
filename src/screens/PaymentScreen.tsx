@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { View, StyleSheet, Text } from 'react-native';
 import React from 'react';
 import PaymentHeader from '../components/PaymentHeader';
