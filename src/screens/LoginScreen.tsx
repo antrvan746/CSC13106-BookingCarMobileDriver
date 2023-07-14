@@ -41,10 +41,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProp
 
   // const dispatch = useAppDispatch();
 
-  const handleScreenChange = () => {
+  const handleSigninButton = () => {
     // dispatch(setMainScreenState({
     //   state: mainScreenState.state === 'Available' ? 'Available' : 'Unavailable',
     // }));
+    navigation.navigate('Main');
+  };
+
+  const handleSendOtpButton = () => {
     navigation.navigate('Main');
   };
 
@@ -108,6 +112,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProp
         </View>
         <View style={styles.inputWrapper}>
           <AppTextInput placeholder="Phone number" />
+          <TouchableOpacity
+            onPress={handleSendOtpButton}
+            style={styles.sendOtpButton}>
+            <Text style={styles.sendOtpText}>
+              Send OTP Code
+            </Text>
+          </TouchableOpacity>
           <AppTextInput placeholder="OTP Code" />
         </View>
 
@@ -118,7 +129,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }: LoginScreenProp
         </View>
 
         <TouchableOpacity
-          onPress={handleScreenChange}
+          onPress={handleSigninButton}
           style={styles.signInButton}>
           <Text style={styles.signInText}>
             Sign in
@@ -244,4 +255,26 @@ const styles = StyleSheet.create({
     borderRadius: Spacing / 2,
     marginHorizontal: Spacing,
   },
+  sendOtpButton: {
+    marginHorizontal: 60,
+    width: Spacing * 25,
+    padding: Spacing * 1.2,
+    backgroundColor: Colors.primary,
+    marginVertical: Spacing * 0.5,
+    borderRadius: Spacing,
+    shadowColor: Colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: Spacing,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: Spacing,
+  },
+  sendOtpText: {
+    fontFamily: Font['poppins-bold'],
+    color: Colors.white,
+    textAlign: 'center',
+    fontSize: FontSize.medium,
+    fontWeight: '700',
+  }
 });

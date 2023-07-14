@@ -51,8 +51,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
             </Text>
           </TouchableOpacity>
 
+          {/* TODO: Create Register Screen */}
           <TouchableOpacity
-            onPress={() => navigate('Register')}
+            onPress={() => navigate('Main')}
             style={styles.registerButton} >
             <Text style={styles.registerButtonText} >
               Register
