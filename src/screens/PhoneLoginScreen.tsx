@@ -4,17 +4,13 @@
 import React, { useState, useRef, createRef } from 'react';
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
+import { LoginStackSreenProps } from '../types/Login';
+import Colors from '../constants/Colors';
+import Font from '../constants/Font';
 
-// Navigation
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
-type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-// Redux
-import { useAppDispatch, useAppSelector } from '../redux/hook';
-// import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 
-function LoginScreen({ navigation, route }: LoginScreenProps) {
+function PhoneLogin({ navigation, route }: LoginStackSreenProps) {
 
   const [validNumber, setValidNumber] = useState<boolean>(false);
 
@@ -31,19 +27,18 @@ function LoginScreen({ navigation, route }: LoginScreenProps) {
     formatedPhone.current = phone;
 
     //Exception testing number
-    if (phone === '+11234556789') {
+    if (phone === '+84799192229') {
       setValidNumber(true);
     }
   }
 
   function onConfirmPhoneNumber() {
-    navigation.navigate('Otp', { phoneNumber: formatedPhone.current });
+    navigation.navigate('PhoneVerify', { phone: formatedPhone.current });
   }
 
   return (<View style={styles.screenContainer}>
     <View style={styles.phoneStyle}>
       <Text style={{ alignSelf: 'flex-start' }}>Phone number</Text>
-
       <PhoneInput
         ref={phoneRef}
         onChangeText={onPhoneChangeText}
@@ -60,7 +55,7 @@ function LoginScreen({ navigation, route }: LoginScreenProps) {
       style={[styles.nextButtonWrapper, { opacity: validNumber ? 1 : 0.5 }]}
       onPress={onConfirmPhoneNumber} >
       <View style={styles.nextButton}>
-        <Text style={styles.buttonText}> Continue </Text>
+        <Text style={styles.buttonText}> Next </Text>
       </View>
     </TouchableHighlight>
   </View>);
@@ -72,24 +67,24 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   nextButtonWrapper: {
-    backgroundColor: '#13B45D', //GlobalStyles.green500.color,
+    backgroundColor: Colors.primary,
+    height: 60,
     position: 'absolute',
-    bottom: 12,
-    left: 12,
-    right: 12,
-    borderRadius: 24,
+    bottom: 24,
+    left: 24,
+    right: 24,
+    borderRadius: 50,
   },
   nextButton: {
-    padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
   },
-
   phoneStyle: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 42,
-    paddingHorizontal: 12,
+    paddingHorizontal: 20,
   },
   phoneInputContainer: {
     width: '100%',
@@ -97,9 +92,10 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.white,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: Font['poppins-bold'],
   },
   bottomBlackBorder: {
     borderColor: 'transparent',
@@ -108,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default PhoneLogin;

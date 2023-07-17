@@ -2,26 +2,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-// import { RootStackParamList } from './src/types/Screen';
 
 // Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
-import LoginScreen from './src/screens/LoginScreen';
+// import LoginScreen from './src/screens/LoginScreen.old';
+// import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
 import DrivingScreen from './src/screens/DrivingScreen';
 import PaymentScreen from './src/screens/PaymentScreen';
 import PaymentCongratsScreen from './src/screens/PaymentCongratsScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import OtpScreen from './src/screens/OtpScreen';
+import LoginScreen from './src/screens/LoginSelectScreen';
+
+// Redux
 import { Provider } from 'react-redux';
 import ReduxStore from './src/redux/store';
-import WelcomeScreen from './src/screens/WelcomeScreen';
+import { selectLoginState } from './src/redux/LoginState';
 
 export type RootStackParamList = {
   Welcome: undefined;
+  SelectLoginMethod: undefined;
   Register: undefined;
   Login: undefined;
+  Otp: { phoneNumber: string };
   Main: undefined;
   Driving: { tripId: string };
   Payment: { paymentId: string };
@@ -46,9 +53,14 @@ function App(): JSX.Element {
             name="Login"
             component={LoginScreen} />
 
+          {/* <Stack.Screen
+            name="Otp"
+            component={OtpScreen} /> */}
+
           <Stack.Screen
             name="Main"
             component={MainScreen} />
+
 
           <Stack.Screen
             name="Driving"
