@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export class TripButtonBar extends Component {
@@ -13,6 +12,18 @@ export class TripButtonBar extends Component {
   render() {
     return (
       <View style={styles.tripButtonsWrapper}>
+        <View style={styles.call}>
+          <TouchableOpacity onPress={this.handlePress}>
+            <View style={styles.buttonWrapper}>
+              <View>
+                <Icon name="phone" color={'#2F2F2C'} size={26} />
+              </View>
+              <Text style={styles.text} numberOfLines={2}>
+                Gọi miễn phí
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         <View style={styles.chat}>
           <TouchableOpacity onPress={this.handlePress}>
             <View style={styles.buttonWrapper}>
@@ -23,18 +34,6 @@ export class TripButtonBar extends Component {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={styles.call}>
-          <TouchableOpacity onPress={this.handlePress}>
-            <View style={styles.buttonWrapper}>
-              <View>
-                <Icon name="phone" color={'#2F2F2C'} size={26} />
-              </View>
-              <Text style={styles.text} numberOfLines={2}>
-                Cuộc gọi miễn phí
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
         <View style={styles.helpCenter}>
           <TouchableOpacity onPress={this.handlePress}>
             <View style={styles.buttonWrapper}>
@@ -42,7 +41,7 @@ export class TripButtonBar extends Component {
                 <Icon name="help" color={'#2F2F2C'} size={26} />
               </View>
               <Text style={[styles.text]} numberOfLines={2}>
-                Trung tâm hỗ trợ
+                Hỗ trợ
               </Text>
             </View>
           </TouchableOpacity>
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
   tripButtonsWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#F9F9F9',
+    // backgroundColor: '#F9F9F9',
     // alignItems: 'center',
     height: 90,
     paddingHorizontal: 20,
