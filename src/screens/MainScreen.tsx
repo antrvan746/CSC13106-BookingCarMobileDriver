@@ -123,7 +123,7 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
   }, []);
 
   const [mapLayoutReady, setMapLayoutReady] = useState(false);
-
+  const [isInBottomSheet, setInBottomSheet] = useState(false);
   // Update the region prop whenever the currentLocation changes
   const region = currentLocation
     ? {
@@ -142,9 +142,10 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
   };
 
   return (
-    <GestureHandlerRootView style={styles.containerWrapper}>
+    <View style={styles.containerWrapper}>
       {currentLocation ? (
         <MapView
+          scrollEnabled={!isInBottomSheet}
           style={{ flex: 1 }}
           initialRegion={{
             latitude: currentLocation.latitude,
@@ -167,10 +168,13 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
         <View style={{ width: 210 }} />
         <UserAvatar />
       </View>
-      <View style={styles.secondWrapper}>
+      <View
+        onTouchStart={(e) => { setInBottomSheet(true) }}
+        onTouchEnd={() => { setInBottomSheet(false) }}
+        style={styles.secondWrapper}>
         <BottomSheet navigation={navigation} route={undefined} />
       </View>
-    </GestureHandlerRootView>
+    </View>
   );
 };
 

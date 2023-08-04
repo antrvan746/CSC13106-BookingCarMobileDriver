@@ -23,7 +23,7 @@ import TripInfor from './TripInfor';
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.44;
-const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.1;
+const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.16;
 const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = 50;
@@ -122,9 +122,9 @@ const BottomSheet = ({ navigation, route }: Props): JSX.Element => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} {...panResponder.panHandlers}>
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
-        <View style={styles.draggableArea} {...panResponder.panHandlers}>
+        <View style={styles.draggableArea} >
           <View style={styles.dragHandle} />
         </View>
         <View style={styles.secondWrapper}>
@@ -144,7 +144,9 @@ const BottomSheet = ({ navigation, route }: Props): JSX.Element => {
             <TripButtonBar />
           </View>
           <View style={styles.tripHandleButtonsComponent}>
-            <TripHandleButtons buttonText={buttonText} handleTripState={handleTripStateButtonPress} handleOffState={handleOffButtonPress} />
+            <TripHandleButtons buttonText={buttonText}
+              handleTripState={handleTripStateButtonPress}
+              handleOffState={handleOffButtonPress} />
           </View>
         </View>
       </Animated.View>

@@ -10,11 +10,9 @@ import Font from '../constants/Font';
 import Colors from '../constants/Colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-interface PhoneOTPProps extends LoginStackSreenProps {
-  onSuccess: () => void
-}
 
-function PhoneLoginOTP({ navigation, route, onSuccess }: PhoneOTPProps) {
+
+function PhoneLoginOTP({ navigation, route }: LoginStackSreenProps) {
   const [otp, setOtp] = useState<string>('');
   const textInputRef = createRef<TextInput>();
 
@@ -25,17 +23,7 @@ function PhoneLoginOTP({ navigation, route, onSuccess }: PhoneOTPProps) {
     textInputRef.current?.focus();
   }
 
-  const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
-    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
-    //dispatch(setLoginState({ user }));
-    if (user) {
-      database().ref('/LocationIQ_KEY')
-        .once('value').then(snap => {
-          console.log('Location IQ key: ', snap.val());
-        });
-      //onSuccess();
-    }
-  };
+
 
   async function signInWithPhoneNumber() {
     if (route.params?.phone) {
@@ -49,10 +37,7 @@ function PhoneLoginOTP({ navigation, route, onSuccess }: PhoneOTPProps) {
       const confirmation = await auth().signOut();
     }
   }
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
+
 
   return (<View style={styles.screenContainer}>
     <Text style={styles.titleText}>Enter the 6-digit code sent to {route.params?.phone} by SMS</Text>

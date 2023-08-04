@@ -64,7 +64,7 @@ const BottomSheet = ({ navigation }: MainScreenProps) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
+      onPanResponderGrant: (e) => {
         animatedValue.setOffset(lastGestureDy.current);
       },
       onPanResponderMove: (e, gesture) => {
@@ -99,7 +99,7 @@ const BottomSheet = ({ navigation }: MainScreenProps) => {
   ).current;
 
   const springAnimation = (direction: 'up' | 'down') => {
-    console.log('direction', direction);
+    // console.log('direction', direction);
     lastGestureDy.current =
       direction === 'down' ? MAX_DOWNWARD_TRANSLATE_Y : MAX_UPWARD_TRANSLATE_Y;
     Animated.spring(animatedValue, {
@@ -121,9 +121,9 @@ const BottomSheet = ({ navigation }: MainScreenProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} {...panResponder.panHandlers}>
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
-        <View style={styles.draggableArea} {...panResponder.panHandlers}>
+        <View style={styles.draggableArea} >
           <View style={styles.dragHandle} />
         </View>
         <View style={styles.buttonWrapper}>

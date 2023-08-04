@@ -124,11 +124,26 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
 }
 
 function LoginScreen({ navigation, route }: StackScreenProps) {
-  function onSuccessLogin() {
-    console.log('Navigate to desire screen');
+  const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
+    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
+    //dispatch(setLoginState({ user }));
+    if (!user) {
+      return
+    }
+    // database().ref('/LocationIQ_KEY')
+    //   .once('value').then(snap => {
+    //     console.log('Location IQ key: ', snap.val());
+    //   });
+    //onSuccess();
     navigation.replace('Main');
-    //navigation.replace("Main");
-  }
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+
 
   return (
     <NavStack.Navigator initialRouteName="Select">
@@ -145,7 +160,7 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
       </NavStack.Screen>
       <NavStack.Screen name="PhoneVerify">
         {
-          (props) => <PhoneLoginOTP {...props} onSuccess={onSuccessLogin} />
+          (props) => <PhoneLoginOTP {...props} />
         }
       </NavStack.Screen>
     </NavStack.Navigator>);
