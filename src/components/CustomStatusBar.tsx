@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/self-closing-comp */
+
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
@@ -9,7 +8,7 @@ interface StatusTextProps {
   status: string;
 }
 
-const StatusBar: React.FC<StatusTextProps> = ({ status }) => {
+const CustomStatusBar: React.FC<StatusTextProps> = ({ status }) => {
   const iconColor = status === 'online' ? '#13B45D' : '#E50101';
   return (
     <View style={styles.statusView}>
@@ -26,12 +25,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingLeft: 20,
-    backgroundColor: '#F9F9F9',
-    borderRadius: 10,
-    height: 58,
-    elevation: 8,
-    shadowColor: 'black',
+    paddingLeft: 10,
+    // backgroundColor: '#F9F9F9',
+    // borderRadius: 10,
+    // height: 58,
+    // elevation: 8,
+    // shadowColor: 'black',
   },
   statusText: {
     paddingLeft: 10,
@@ -41,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StatusBar;
+export default CustomStatusBar;

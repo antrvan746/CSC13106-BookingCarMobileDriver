@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/self-closing-comp */
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const NavigationBar = () => {
@@ -49,7 +49,7 @@ const NavigationBar = () => {
             <View style={styles.icon}>
               <Icon name="bolt" color={statusColor} size={18} />
             </View>
-            <Text style={[styles.text, {color: '#2F2F2C'}]} numberOfLines={2}>
+            <Text style={[styles.text, { color: '#2F2F2C' }]} numberOfLines={2}>
               Tự động nhận
             </Text>
           </View>
@@ -85,12 +85,12 @@ const styles = StyleSheet.create({
   navigationView: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    backgroundColor: '#F9F9F9',
-    borderRadius: 10,
-    height: 84,
-    paddingHorizontal: 20,
-    elevation: 8,
-    shadowColor: 'black',
+    // backgroundColor: '#F9F9F9',
+    // borderRadius: 10,
+    // height: 84,
+    paddingHorizontal: 10,
+    // elevation: 8,
+    // shadowColor: 'black',
   },
   services: {
     alignItems: 'center',

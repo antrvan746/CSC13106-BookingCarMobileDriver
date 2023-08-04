@@ -6,17 +6,21 @@ import React, { useEffect, useState } from 'react';
 import { Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 // Componenents
 import Revenue from '../components/Revenue';
 import Layer from '../components/Layer';
-import StatusBar from '../components/StatusBar';
+import StatusBar from '../components/CustomStatusBar';
 import StatusButton from '../components/StatusButton';
 import UserAvatar from '../components/UserAvatar';
 import NavigationBar from '../components/NavigationBar';
+import BottomSheet from '../components/BottomSheet';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { RootStackParamList } from '../../App';
 
 // Redux
@@ -24,8 +28,11 @@ import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import { PERMISSIONS, request } from 'react-native-permissions';
+import { faRouble } from '@fortawesome/free-solid-svg-icons';
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
+
 
 interface UserLocationChangeEvent {
   nativeEvent: {
@@ -130,12 +137,12 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
     // Update the currentLocation state with the new user location
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    console.log('Moving:', latitude, longitude)
+    // console.log('Moving:', latitude, longitude);
     setCurrentLocation({ latitude, longitude });
   };
 
   return (
-    <View style={styles.containerWrapper}>
+    <GestureHandlerRootView style={styles.containerWrapper}>
       {currentLocation ? (
         <MapView
           style={{ flex: 1 }}
@@ -148,7 +155,6 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
           showsUserLocation // enables the blue dot
           onUserLocationChange={handleUserLocationChange} // update the marker position
         >
-          {/* Mark the current location on the map */}
           <Marker coordinate={currentLocation} title="Current Location" />
         </MapView>
       ) : (
@@ -157,58 +163,33 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
         </View>
       )}
       <View style={styles.firstWrapper}>
-        {/* <Revenue />
-        <UserAvatar /> */}
-
+        <Revenue />
+        <View style={{ width: 210 }} />
+        <UserAvatar />
       </View>
-      {/* <View style={styles.secondWrapper}>
-        <View style={styles.buttonWrapper}>
-          <View
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <StatusButton handlePress={handleStatusButtonPress} />
-          </View>
-
-          <Layer />
-        </View>
-
-        <View style={styles.statusBarWrapper}>
-          <StatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
-          <Text>{mainScreenState.state}</Text>
-          <Button title="Change state" onPress={handleStateChange} />
-          <Button title="Login Screen" onPress={goToLoginScreen} />
-          <Button title="Welcome Screen" onPress={goToWelcomeScreen} />
-          <View style={{ marginBottom: 5, marginTop: 5 }}></View>
-          <NavigationBar />
-        </View>
-      </View> */}
-    </View>
+      <View style={styles.secondWrapper}>
+        <BottomSheet navigation={navigation} route={undefined} />
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   containerWrapper: {
     flex: 1,
-    position: 'relative',
+    // position: 'relative',
   },
   firstWrapper: {
+    position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 40,
+    // justifyContent: 'space-evenly',
+    marginTop: 50,
   },
   secondWrapper: {
     position: 'absolute',
+    width: '100%',
     bottom: 0,
-    left: 0,
-    right: 0,
-    alignSelf: 'center',
-    flexDirection: 'column',
   },
   buttonWrapper: {
     flexDirection: 'row',
