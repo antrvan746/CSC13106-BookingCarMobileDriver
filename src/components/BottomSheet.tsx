@@ -166,7 +166,7 @@ function BottomSheet2({ navigation }: MainScreenProps) {
     dispatch(setMainScreenState({
       state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
     }));
-    navigation.navigate('Driving', { tripId: '123' });
+    //navigation.navigate('Driving', { tripId: '123' });
   };
 
   const handleStateChange = () => {

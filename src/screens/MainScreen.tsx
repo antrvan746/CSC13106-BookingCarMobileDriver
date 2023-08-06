@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -28,6 +28,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import { PERMISSIONS, request } from 'react-native-permissions';
+import GlobalServices from '../services/GlobalServices';
 
 
 
@@ -38,6 +39,7 @@ type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
+  const lastUpdateCoord = useRef<number>(0);
 
   const dispatch = useAppDispatch();
 
@@ -71,6 +73,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
   } | null>(null);
 
   useEffect(() => {
+    lastUpdateCoord.current = Math.floor(Date.now() / 1000);
 
     const requestLocationPermission = async () => {
       try {
@@ -121,6 +124,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         const { latitude, longitude } = position.coords;
         setCurrentLocation({ latitude, longitude });
         console.log(position);
+        console.log("Geohash: ", GlobalServices.GeoHash.encode(latitude, longitude, 4))
       },
       error => console.log('Error getting location: ', error),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 20000 }
@@ -131,8 +135,17 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // Update the currentLocation state with the new user location
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (currentLocation?.latitude !== latitude || currentLocation.longitude !== longitude) {
+        setCurrentLocation({ latitude, longitude });
+        console.log("Geohash: ", GlobalServices.GeoHash.encode(latitude, longitude, 4))
+      } else if (currentTime >= 10 + lastUpdateCoord.current) {
+        setCurrentLocation({ latitude, longitude });
+        console.log("Geohash: ", GlobalServices.GeoHash.encode(latitude, longitude, 4))
+        console.log("Interval loc update")
+        lastUpdateCoord.current = currentTime;
+      }
       // console.log('Moving:', latitude, longitude);
-      setCurrentLocation({ latitude, longitude });
     }
 
   };
