@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
-import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -28,19 +28,14 @@ import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import { PERMISSIONS, request } from 'react-native-permissions';
-import { faRouble } from '@fortawesome/free-solid-svg-icons';
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
+
+
 
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
 
-interface UserLocationChangeEvent {
-  nativeEvent: {
-    coordinate: LatLng;
-  };
-}
 
-const MainScreen = ({ navigation }: MainScreenProps) => {
+const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
@@ -76,6 +71,7 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
   } | null>(null);
 
   useEffect(() => {
+
     const requestLocationPermission = async () => {
       try {
         // Request location permission for Android
@@ -107,43 +103,44 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
       }
     };
 
-    const getCurrentLocation = () => {
-      Geolocation.getCurrentPosition(
-        position => {
-          const { latitude, longitude } = position.coords;
-          setCurrentLocation({ latitude, longitude });
-          console.log(position);
-        },
-        error => console.log('Error getting location: ', error),
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-      );
-    };
-
     requestLocationPermission();
   }, []);
 
-  const [mapLayoutReady, setMapLayoutReady] = useState(false);
   const [isInBottomSheet, setInBottomSheet] = useState(false);
   // Update the region prop whenever the currentLocation changes
-  const region = currentLocation
-    ? {
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }
-    : undefined;
+  const region = !currentLocation ? undefined : {
+    latitude: currentLocation.latitude,
+    longitude: currentLocation.longitude,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
+
+  function getCurrentLocation() {
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        setCurrentLocation({ latitude, longitude });
+        console.log(position);
+      },
+      error => console.log('Error getting location: ', error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 20000 }
+    );
+  };
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
     // Update the currentLocation state with the new user location
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    // console.log('Moving:', latitude, longitude);
-    setCurrentLocation({ latitude, longitude });
+    if (event.nativeEvent.coordinate) {
+      const { latitude, longitude } = event.nativeEvent.coordinate;
+      // console.log('Moving:', latitude, longitude);
+      setCurrentLocation({ latitude, longitude });
+    }
+
   };
 
   return (
     <View style={styles.containerWrapper}>
-      {currentLocation ? (
+      {!currentLocation ? null :
+
         <MapView
           scrollEnabled={!isInBottomSheet}
           style={{ flex: 1 }}
@@ -158,11 +155,7 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
         >
           <Marker coordinate={currentLocation} title="Current Location" />
         </MapView>
-      ) : (
-        <View style={{ flex: 1 }} onLayout={() => setMapLayoutReady(true)}>
-          <Text>Loading...</Text>
-        </View>
-      )}
+      }
       <View style={styles.firstWrapper}>
         <Revenue />
         <View style={{ width: 210 }} />
@@ -172,7 +165,7 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
         onTouchStart={(e) => { setInBottomSheet(true) }}
         onTouchEnd={() => { setInBottomSheet(false) }}
         style={styles.secondWrapper}>
-        <BottomSheet navigation={navigation} route={undefined} />
+        <BottomSheet navigation={navigation} route={route} />
       </View>
     </View>
   );

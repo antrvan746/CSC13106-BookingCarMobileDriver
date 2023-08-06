@@ -42,7 +42,7 @@ function App(): JSX.Element {
     <Provider store={ReduxStore}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Welcome"
+          initialRouteName="Main"
           screenOptions={{ headerShown: false }}>
 
           <Stack.Screen

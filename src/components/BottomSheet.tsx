@@ -19,6 +19,7 @@ import Layer from './Layer';
 import StatusButton from './StatusButton';
 import CustomStatusBar from './CustomStatusBar';
 import NavigationBar from './NavigationBar';
+import BottomBox from './Animations/BottomBox';
 
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
@@ -155,6 +156,69 @@ const BottomSheet = ({ navigation }: MainScreenProps) => {
   );
 };
 
+function BottomSheet2({ navigation }: MainScreenProps) {
+  const mainScreenState = useAppSelector(selectMainScreenState);
+  const drivingScreenState = useAppSelector(selectDrivingScreenState);
+
+  const dispatch = useAppDispatch();
+
+  const handleStatusButtonPress = () => {
+    dispatch(setMainScreenState({
+      state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
+    }));
+    navigation.navigate('Driving', { tripId: '123' });
+  };
+
+  const handleStateChange = () => {
+    dispatch(setDrivingScreenState({
+      state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
+    }));
+    navigation.replace('Driving', { tripId: '123' });
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+  };
+
+  const goToLoginScreen = () => {
+    navigation.replace('Login');
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+  };
+
+  const goToWelcomeScreen = () => {
+    navigation.replace('Welcome');
+    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+  };
+
+
+  return (<>
+
+    <View style={styles.buttonWrapper}>
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <StatusButton handlePress={handleStatusButtonPress} />
+      </View>
+      {/* TODO: fix UI bug */}
+      {/* <Layer /> */}
+    </View>
+
+    <View style={styles.statusBarWrapper}>
+      <CustomStatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
+      <Text>{mainScreenState.state}</Text>
+      {/* <Button title="Change state" onPress={handleStateChange} />
+          <Button title="Login Screen" onPress={goToLoginScreen} />
+          <Button title="Welcome Screen" onPress={goToWelcomeScreen} /> */}
+      <View style={styles.seperateLine} />
+      <NavigationBar />
+    </View>
+  </>
+  );
+};
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -222,4 +286,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomSheet;
+export default function (props: MainScreenProps) {
+  return (<BottomBox
+    content={<BottomSheet2 {...props} />}
+    box_max_h={BOTTOM_SHEET_MAX_HEIGHT}
+    box_min_h={BOTTOM_SHEET_MIN_HEIGHT} />)
+};

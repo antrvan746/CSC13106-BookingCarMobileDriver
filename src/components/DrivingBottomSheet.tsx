@@ -18,6 +18,7 @@ import DrivingStatus from './DrivingStatus';
 import TripButtonBar from './TripButtonBar';
 import TripHandleButtons from './TripHandleButtons';
 import TripInfor from './TripInfor';
+import BottomBox from './Animations/BottomBox';
 
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
@@ -154,6 +155,64 @@ const BottomSheet = ({ navigation, route }: Props): JSX.Element => {
   );
 };
 
+function BottomSheet2({ navigation, route }: Props): JSX.Element {
+  const dispatch = useAppDispatch();
+  const drivingScreenState = useAppSelector(selectDrivingScreenState);
+  let buttonText = 'Đã đến';
+
+  const handleTripStateButtonPress = () => {
+    if (drivingScreenState.state === 'Arriving') {
+      buttonText = 'Đã đón';
+      dispatch(setDrivingScreenState({ state: 'Arrived' }));
+    } else if (drivingScreenState.state === 'Arrived') {
+      buttonText = 'Đã trả';
+      dispatch(setDrivingScreenState({ state: 'Carrying' }));
+    } else if (drivingScreenState.state === 'Carrying') {
+      buttonText = 'Đã đến';
+      dispatch(setDrivingScreenState({ state: 'Finished' }));
+      dispatch(setDrivingScreenState({ state: 'Arriving' }));
+      dispatch(setPaymentScreenState({ state: 'InProgress' }));
+      navigation.navigate('Payment', { paymentId: '1238721267' });
+    }
+    // else if (drivingScreenState.state === 'Finished') {
+    //   dispatch(setDrivingScreenState({ state: 'Arriving' }));
+    // }
+  };
+
+  const handleOffButtonPress = () => {
+    dispatch(setMainScreenState({ state: 'Unavailable' }));
+    dispatch(setDrivingScreenState({ state: 'Arriving' }));
+    navigation.replace('Main');
+  };
+
+  return (
+
+    <View style={styles.secondWrapper}>
+      <View style={styles.drivingStatusComponent}>
+        <DrivingStatus />
+      </View>
+
+      <View style={styles.seperateLine} />
+
+      <View style={styles.tripInforComponent}>
+        <TripInfor />
+      </View>
+
+      <View style={styles.seperateLine} />
+
+      <View style={styles.tripButtonBarComponent}>
+        <TripButtonBar />
+      </View>
+      <View style={styles.tripHandleButtonsComponent}>
+        <TripHandleButtons buttonText={buttonText}
+          handleTripState={handleTripStateButtonPress}
+          handleOffState={handleOffButtonPress} />
+      </View>
+    </View>
+
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -222,4 +281,8 @@ const styles = StyleSheet.create({
   tripHandleButtonsComponent: {},
 });
 
-export default BottomSheet;
+export default function (props: Props) {
+  return <BottomBox
+    content={<BottomSheet2 {...props} />}
+    box_max_h={BOTTOM_SHEET_MAX_HEIGHT} box_min_h={BOTTOM_SHEET_MIN_HEIGHT} />
+};
