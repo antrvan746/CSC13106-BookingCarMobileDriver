@@ -130,11 +130,29 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
     if (!user) {
       return
     }
-    // database().ref('/LocationIQ_KEY')
-    //   .once('value').then(snap => {
-    //     console.log('Location IQ key: ', snap.val());
-    //   });
-    //onSuccess();
+
+    // Send the user's data to the server
+    const loginData = {
+      phone: user.phoneNumber,
+      name: user.displayName || "Driver Test",
+    };
+    fetch('http://10.0.2.2:3000/api/drivers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(loginData),
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        console.log('Login info sent to server:', data);
+      })
+      .catch((error) => {
+        console.error('Error sending login info:', error);
+      });
+
     navigation.replace('Main');
   };
 
