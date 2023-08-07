@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 
 export class DrivingStatus extends Component {
   render() {
@@ -10,8 +10,9 @@ export class DrivingStatus extends Component {
           <Text>DrivingStatus</Text>
           <Text>Địa điểm</Text>
         </View>
+
         <View style={styles.stepInfor}>
-          <Text>1 • Đón khách</Text>
+          <Text>Đón khách</Text>
           <Text>GrabBike</Text>
         </View>
         <View style={styles.nagivateButton}>

@@ -1,13 +1,11 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { View, StyleSheet, Text } from 'react-native';
-import React from 'react';
-
-// Components
-import DrivingStatus from '../components/DrivingStatus';
-import TripInfor from '../components/TripInfor';
-import TripButtonBar from '../components/TripButtonBar';
-import TripHandleButtons from '../components/TripHandleButtons';
+import { View, StyleSheet, Text, Animated } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Geolocation from 'react-native-geolocation-service';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Navigations
 import { RootStackParamList } from '../../App';
@@ -15,68 +13,95 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
-import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
-import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+import DrivingBottomSheet from '../components/DrivingBottomSheet';
 
-interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> {
+interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
+interface UserLocationChangeEvent {
+  nativeEvent: {
+    coordinate: LatLng;
+  };
 }
 
 const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  const [mapLayoutReady, setMapLayoutReady] = useState(false);
+
   const tripId = route.params.tripId;
-  let buttonText = 'Đã đến';
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
-  const paymentScreenState = useAppSelector(selectPaymentScreenState);
-  const mainScreenState = useAppSelector(selectMainScreenState);
 
-  const dispatch = useAppDispatch();
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        setCurrentLocation({ latitude, longitude });
+        console.log(position);
+      },
+      error => console.log('Error getting location: ', error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  };
 
-  const handleTripStateButtonPress = () => {
-    if (drivingScreenState.state === 'Arriving') {
-      buttonText = 'Đã đón';
-      dispatch(setDrivingScreenState({ state: 'Arrived' }));
-    } else if (drivingScreenState.state === 'Arrived') {
-      buttonText = 'Đã trả';
-      dispatch(setDrivingScreenState({ state: 'Carrying' }));
-    } else if (drivingScreenState.state === 'Carrying') {
-      buttonText = 'Đã đến';
-      dispatch(setDrivingScreenState({ state: 'Finished' }));
-      dispatch(setDrivingScreenState({ state: 'Arriving' }));
-      dispatch(setPaymentScreenState({ state: 'InProgress' }));
-      navigation.navigate('Payment', { paymentId: '1238721267' });
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const region = currentLocation
+    ? {
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
     }
-    // else if (drivingScreenState.state === 'Finished') {
-    //   dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    // }
+    : undefined;
+
+  const handleUserLocationChange = (event: UserLocationChangeEvent) => {
+    // Update the currentLocation state with the new user location
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    // console.log('Moving:', latitude, longitude);
+    setCurrentLocation({ latitude, longitude });
   };
 
-  const handleOffButtonPress = () => {
-    dispatch(setMainScreenState({ state: 'Unavailable' }));
-    dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    navigation.replace('Main');
-  };
+  const [animation, setAnimation] = useState<{
+    transform: {
+      translateY: Animated.AnimatedInterpolation<string | number>;
+    }[]
+  } | {}>({});
+
+  const [isInBottomSheet, setInBottomSheet] = useState(false);
 
   return (
     <View style={styles.containerWrapper}>
-      <View>
-        <Text>Map</Text>
-        <Text>{tripId}</Text>
-        <Text>{drivingScreenState.state}</Text>
-      </View>
-      <View style={styles.secondWrapper}>
-        <View style={styles.drivingStatusComponent}>
-          <DrivingStatus />
+      {currentLocation ? (
+        <MapView
+          scrollEnabled={!isInBottomSheet}
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          showsUserLocation // enables the blue dot
+          onUserLocationChange={handleUserLocationChange} // update the marker position
+        >
+          <Marker coordinate={currentLocation} title="Current Location" />
+        </MapView>
+      ) : (
+        <View style={{ flex: 1 }} onLayout={() => setMapLayoutReady(true)}>
+          <Text>Loading...</Text>
         </View>
-        <View style={styles.tripInforComponent}>
-          <TripInfor />
-        </View>
-        <View style={styles.tripButtonBarComponent}>
-          <TripButtonBar />
-        </View>
-        <View style={styles.tripHandleButtonsComponent}>
-          <TripHandleButtons buttonText={buttonText} handleTripState={handleTripStateButtonPress} handleOffState={handleOffButtonPress} />
-        </View>
+      )}
+      <View
+        onTouchStart={() => { setInBottomSheet(true) }}
+        onTouchEnd={() => { setInBottomSheet(false) }}
+        style={styles.bottomSheetWrapper}>
+        <DrivingBottomSheet navigation={navigation} route={route} />
       </View>
     </View>
   );
@@ -86,26 +111,12 @@ const styles = StyleSheet.create({
   containerWrapper: {
     flex: 1,
     position: 'relative',
+    backgroundColor: "pink"
   },
-  secondWrapper: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignSelf: 'center',
-    flexDirection: 'column',
-    marginBottom: 20,
-  },
-  drivingStatusComponent: {
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  tripInforComponent: {
-    paddingHorizontal: 15,
-    marginBottom: 5,
-  },
-  tripButtonBarComponent: {},
-  tripHandleButtonsComponent: {},
+  bottomSheetWrapper: {
+    position: "absolute", bottom: 0, left: 0, right: 0,
+    backgroundColor: "green"
+  }
 });
 
 export default DrivingScreen;

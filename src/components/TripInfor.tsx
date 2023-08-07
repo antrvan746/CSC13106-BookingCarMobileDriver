@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 
 export class TripInfor extends Component {
   render() {
@@ -10,9 +10,9 @@ export class TripInfor extends Component {
           <Text style={styles.riderName}>Nguyễn Ngọc Anh Thư</Text>
         </View>
         <View style={styles.location}>
-          <Text style={styles.destination}>Nhà hàng Hàn Quốc Hana</Text>
+          {/* <Text style={styles.destination}>Nhà hàng Hàn Quốc Hana</Text> */}
           <Text style={styles.address}>
-            05, Khu Phố Nam Sài Gòn Residences Nguyễn Hữu Thọ, Xã Phước Kiến,...
+            56/2, Điện Biên Phủ, Phường 26, Quận Bình Thạnh
           </Text>
         </View>
         <View>
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     color: '#2F2C2C',
     fontSize: 15,
     fontWeight: '500',
+    marginTop: 5,
   },
 });
 

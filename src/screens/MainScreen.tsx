@@ -1,29 +1,44 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/self-closing-comp */
-import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
+
+import React, { useEffect, useState } from 'react';
+import { Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Geolocation from 'react-native-geolocation-service';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 // Componenents
 import Revenue from '../components/Revenue';
 import Layer from '../components/Layer';
-import StatusBar from '../components/StatusBar';
+import StatusBar from '../components/CustomStatusBar';
 import StatusButton from '../components/StatusButton';
 import UserAvatar from '../components/UserAvatar';
 import NavigationBar from '../components/NavigationBar';
+import BottomSheet from '../components/BottomSheet';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { RootStackParamList } from '../../App';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
+import { PERMISSIONS, request } from 'react-native-permissions';
+import { faRouble } from '@fortawesome/free-solid-svg-icons';
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
+
+
+interface UserLocationChangeEvent {
+  nativeEvent: {
+    coordinate: LatLng;
+  };
+}
 
 const MainScreen = ({ navigation }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
@@ -55,37 +70,109 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
     // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const requestLocationPermission = async () => {
+      try {
+        // Request location permission for Android
+        if (Platform.OS === 'android') {
+          const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
+
+          if (granted['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
+            granted['android.permission.ACCESS_COARSE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED) {
+            getCurrentLocation();
+          } else {
+            console.log('Location permission denied');
+          }
+        }
+
+        // Request location permission for iOS
+        if (Platform.OS === 'ios') {
+          const status = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+          if (status === 'granted') {
+            getCurrentLocation();
+          } else {
+            console.log('Location permission denied');
+          }
+        }
+      } catch (error) {
+        console.log('Error requesting location permission: ', error);
+      }
+    };
+
+    const getCurrentLocation = () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation({ latitude, longitude });
+          console.log(position);
+        },
+        error => console.log('Error getting location: ', error),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
+    };
+
+    requestLocationPermission();
+  }, []);
+
+  const [mapLayoutReady, setMapLayoutReady] = useState(false);
+  const [isInBottomSheet, setInBottomSheet] = useState(false);
+  // Update the region prop whenever the currentLocation changes
+  const region = currentLocation
+    ? {
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    }
+    : undefined;
+
+  const handleUserLocationChange = (event: UserLocationChangeEvent) => {
+    // Update the currentLocation state with the new user location
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    // console.log('Moving:', latitude, longitude);
+    setCurrentLocation({ latitude, longitude });
+  };
+
   return (
     <View style={styles.containerWrapper}>
+      {currentLocation ? (
+        <MapView
+          scrollEnabled={!isInBottomSheet}
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          showsUserLocation // enables the blue dot
+          onUserLocationChange={handleUserLocationChange} // update the marker position
+        >
+          <Marker coordinate={currentLocation} title="Current Location" />
+        </MapView>
+      ) : (
+        <View style={{ flex: 1 }} onLayout={() => setMapLayoutReady(true)}>
+          <Text>Loading...</Text>
+        </View>
+      )}
       <View style={styles.firstWrapper}>
         <Revenue />
+        <View style={{ width: 210 }} />
         <UserAvatar />
       </View>
-      <View style={styles.secondWrapper}>
-        <View style={styles.buttonWrapper}>
-          <View
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <StatusButton handlePress={handleStatusButtonPress} />
-          </View>
-
-          <Layer />
-        </View>
-
-        <View style={styles.statusBarWrapper}>
-          <StatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
-          <Text>{mainScreenState.state}</Text>
-          <Button title="Change state" onPress={handleStateChange} />
-          <Button title="Login Screen" onPress={goToLoginScreen} />
-          <Button title="Welcome Screen" onPress={goToWelcomeScreen} />
-          <View style={{ marginBottom: 5, marginTop: 5 }}></View>
-          <NavigationBar />
-        </View>
+      <View
+        onTouchStart={(e) => { setInBottomSheet(true) }}
+        onTouchEnd={() => { setInBottomSheet(false) }}
+        style={styles.secondWrapper}>
+        <BottomSheet navigation={navigation} route={undefined} />
       </View>
     </View>
   );
@@ -94,21 +181,19 @@ const MainScreen = ({ navigation }: MainScreenProps) => {
 const styles = StyleSheet.create({
   containerWrapper: {
     flex: 1,
-    position: 'relative',
+    // position: 'relative',
   },
   firstWrapper: {
+    position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 40,
+    // justifyContent: 'space-evenly',
+    marginTop: 50,
   },
   secondWrapper: {
     position: 'absolute',
+    width: '100%',
     bottom: 0,
-    left: 0,
-    right: 0,
-    alignSelf: 'center',
-    flexDirection: 'column',
   },
   buttonWrapper: {
     flexDirection: 'row',

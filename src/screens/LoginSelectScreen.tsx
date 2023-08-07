@@ -124,11 +124,44 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
 }
 
 function LoginScreen({ navigation, route }: StackScreenProps) {
-  function onSuccessLogin() {
-    console.log('Navigate to desire screen');
+  const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
+    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
+    //dispatch(setLoginState({ user }));
+    if (!user) {
+      return
+    }
+
+    // Send the user's data to the server
+    const loginData = {
+      phone: user.phoneNumber,
+      name: user.displayName || "Driver Test",
+    };
+    fetch('http://10.0.2.2:3000/api/drivers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(loginData),
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        console.log('Login info sent to server:', data);
+      })
+      .catch((error) => {
+        console.error('Error sending login info:', error);
+      });
+
     navigation.replace('Main');
-    //navigation.replace("Main");
-  }
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+
 
   return (
     <NavStack.Navigator initialRouteName="Select">
@@ -145,7 +178,7 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
       </NavStack.Screen>
       <NavStack.Screen name="PhoneVerify">
         {
-          (props) => <PhoneLoginOTP {...props} onSuccess={onSuccessLogin} />
+          (props) => <PhoneLoginOTP {...props} />
         }
       </NavStack.Screen>
     </NavStack.Navigator>);

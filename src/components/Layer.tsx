@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/self-closing-comp */
 import React from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Layer = () => {
@@ -20,8 +20,8 @@ const Layer = () => {
 const styles = StyleSheet.create({
   layerImage: {
     backgroundColor: '#F9F9F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     borderRadius: 18,
     padding: 2,
     elevation: 8,
