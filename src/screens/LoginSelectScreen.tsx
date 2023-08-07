@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontFamily: Font['poppins-bold'],
     fontSize: 18,
-    fontWeight: 700,
+    fontWeight: "700",
     marginLeft: 12,
   },
 

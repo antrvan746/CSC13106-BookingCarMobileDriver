@@ -3,5 +3,8 @@
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }
