@@ -135,6 +135,8 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
     //     console.log('Location IQ key: ', snap.val());
     //   });
     //onSuccess();
+
+
     navigation.replace('Main');
   };
 
@@ -191,7 +193,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontFamily: Font['poppins-bold'],
     fontSize: 18,
-    fontWeight: 700,
+    fontWeight: "700",
     marginLeft: 12,
   },
 

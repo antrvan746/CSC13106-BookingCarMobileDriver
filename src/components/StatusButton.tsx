@@ -3,10 +3,10 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-no-undef */
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, GestureResponderEvent } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
-const StatusButton = ({ handlePress }) => {
+const StatusButton = ({ handlePress }: { handlePress: ((event: GestureResponderEvent) => void) }) => {
   return (
     <View>
       <TouchableOpacity onPress={handlePress}>

@@ -38,14 +38,14 @@ class RideWs {
     this._onWsMessage = this._onWsMessage.bind(this);
   }
 
-  public Connect() {
+  public Connect(trip_id: string) {
     if (this.ws) {
       console.log("Already socket ");
       return
     }
 
     console.log("Creating websocket")
-    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/client/w3gv7?user_id=abc&lon=106.69380051915194&lat=10.78825445546148`, "ws");
+    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=cool_driver`, "ws");
     this.ws.onopen = this._onWsOpen;
     this.ws.onmessage = this._onWsMessage;
     this.ws.onerror = this._onWsError;
@@ -59,6 +59,7 @@ class RideWs {
   }
 
   private _onWsMessage(e: WebSocketMessageEvent) {
+    console.log("Web socket message: ", e.data);
     if (!e.data || typeof e.data !== "string") {
       return
     }

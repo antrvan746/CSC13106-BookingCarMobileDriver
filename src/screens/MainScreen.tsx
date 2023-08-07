@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -42,6 +42,10 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const lastUpdateCoord = useRef<number>(0);
 
   const dispatch = useAppDispatch();
+
+  if (mainScreenState.state === "Unavailable") {
+    GlobalServices.DriverPoll.Close();
+  }
 
   const handleStatusButtonPress = () => {
     dispatch(setMainScreenState({
@@ -107,6 +111,25 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     };
 
     requestLocationPermission();
+
+    GlobalServices.DriverPoll.listeners.onRideReq = (req) => {
+      Alert.alert("Found a ride", ` From: ${req.sadr} \n To: ${req.eadr}`,
+        [
+          {
+            text: "Accept",
+            onPress: () => {
+              GlobalServices.DriverPoll.Close();
+              dispatch(setMainScreenState({ state: "Unavailable" }));
+              navigation.replace("Driving", { tripId: req.trip_id })
+            }
+          },
+          {
+            text: "Decline",
+            style: 'cancel'
+          }
+        ]);
+      return true;
+    }
   }, []);
 
   const [isInBottomSheet, setInBottomSheet] = useState(false);
@@ -136,14 +159,22 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
       const currentTime = Math.floor(Date.now() / 1000);
+      const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
       if (currentLocation?.latitude !== latitude || currentLocation.longitude !== longitude) {
         setCurrentLocation({ latitude, longitude });
-        console.log("Geohash: ", GlobalServices.GeoHash.encode(latitude, longitude, 4))
+        console.log("Geohash: ", geoHash);
+        if (mainScreenState.state === "Available") {
+          GlobalServices.DriverPoll.Connect(geoHash);
+        }
+
       } else if (currentTime >= 10 + lastUpdateCoord.current) {
         setCurrentLocation({ latitude, longitude });
-        console.log("Geohash: ", GlobalServices.GeoHash.encode(latitude, longitude, 4))
-        console.log("Interval loc update")
+        console.log("Interval loc update geo hash: ", geoHash)
         lastUpdateCoord.current = currentTime;
+        if (mainScreenState.state === "Available") {
+          GlobalServices.DriverPoll.Connect(geoHash);
+        }
+
       }
       // console.log('Moving:', latitude, longitude);
     }

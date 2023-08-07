@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { View, StyleSheet, Text, Animated } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -15,14 +15,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import DrivingBottomSheet from '../components/DrivingBottomSheet';
+import GlobalServices from '../services/GlobalServices';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
-interface UserLocationChangeEvent {
-  nativeEvent: {
-    coordinate: LatLng;
-  };
-}
 
 const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -49,6 +45,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
 
   useEffect(() => {
     getCurrentLocation();
+    GlobalServices.RideWs.Connect(route.params.tripId)
   }, []);
 
   const region = currentLocation
@@ -62,6 +59,9 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
     // Update the currentLocation state with the new user location
+    if (!event.nativeEvent.coordinate) {
+      return
+    }
     const { latitude, longitude } = event.nativeEvent.coordinate;
     // console.log('Moving:', latitude, longitude);
     setCurrentLocation({ latitude, longitude });
