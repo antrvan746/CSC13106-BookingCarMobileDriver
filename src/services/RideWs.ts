@@ -6,8 +6,16 @@ interface SocketListener {
   onClose: ((e: WebSocketCloseEvent) => void)
 }
 
-interface DriverInfo {
-  driver_id: string
+export interface DriverInfo {
+  "slon": number,
+  "slat": number,
+  "sadr": string,
+
+  "elon": number,
+  "elat": number,
+  "eadr": string,
+
+  "user_id": string
 }
 
 interface RideWsConstrucProps {
@@ -22,10 +30,12 @@ interface RideWsConstrucProps {
 class RideWs {
   private ws: WebSocket | undefined
   readonly StatusMsg = {
-    DriverFound: "⚼",
-    NoDriver: "⚼⚼⚼⚼",
-    DriverCancel: "⚼⚼⚼",
-    ClientCancel: "⚼⚼",
+    DriverFound: "DRF߷",
+    NoDriver: "NDR߷",
+    DriverCancel: "DCX߷",
+    ClientCancel: "CCX߷",
+    TripId: "TID߷",
+    Message: "MSG߷",
   }
   public client_listeners: RideWsConstrucProps
 
@@ -45,7 +55,7 @@ class RideWs {
     }
 
     console.log("Creating websocket")
-    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=cool_driver`, "ws");
+    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=test_driver`, "ws");
     this.ws.onopen = this._onWsOpen;
     this.ws.onmessage = this._onWsMessage;
     this.ws.onerror = this._onWsError;
@@ -65,8 +75,9 @@ class RideWs {
     }
     const msg = e.data as string
     console.log("Web socket message: ", e.data);
+    const cmd = msg.length <= 4 ? msg : msg.substring(0, 4)
 
-    switch (msg) {
+    switch (cmd) {
       case this.StatusMsg.NoDriver:
         this.Close();
         break
@@ -76,11 +87,19 @@ class RideWs {
       case this.StatusMsg.DriverCancel:
         this.Close();
         break
-      default:
-        if (msg[0] === "⚼") {
-          this.client_listeners.onDriverFound?.(JSON.parse(msg.substring(1)))
+      case this.StatusMsg.Message:
+        console.log("Driver msg: ", e.data);
+        break;
+      case this.StatusMsg.DriverFound:
+        try {
+          const driver = JSON.parse(msg.substring(4))
+          this.client_listeners?.onDriverFound?.(driver);
+        } catch (e) {
+          console.log(e)
         }
-        this.client_listeners.onMessage?.(e)
+        break
+      default:
+        console.log("Unknow ws cmd:", cmd, msg)
     }
 
   }

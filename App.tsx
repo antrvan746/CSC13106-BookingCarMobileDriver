@@ -30,7 +30,7 @@ export type RootStackParamList = {
   Login: undefined;
   Otp: { phoneNumber: string };
   Main: undefined;
-  Driving: { tripId: string };
+  Driving: { tripId: string, };
   Payment: { paymentId: string };
   CongratsPayment: { paymentId: string };
 }

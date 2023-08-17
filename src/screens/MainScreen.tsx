@@ -158,21 +158,39 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // Update the currentLocation state with the new user location
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
-      const currentTime = Math.floor(Date.now() / 1000);
       const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
-      if (currentLocation?.latitude !== latitude || currentLocation.longitude !== longitude) {
+      if (!currentLocation?.latitude || !currentLocation.longitude) {
+        setCurrentLocation({ latitude, longitude });
+        fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+          method: "POST",
+          headers: {
+            'Accept': '*',
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            lon: longitude,
+            lat: latitude,
+            g: "w3gv"
+          })
+        }).then(c => console.log("Update driver loc: ", c.status));
+        return
+      }
+
+      if (GlobalServices.GeoHash.distance_meters(
+        latitude, longitude,
+        currentLocation.latitude, currentLocation.longitude) >= 100) {
         setCurrentLocation({ latitude, longitude });
         console.log("Geohash: ", geoHash);
         if (mainScreenState.state === "Available") {
           GlobalServices.DriverPoll.Connect(geoHash);
-        }
-
-      } else if (currentTime >= 10 + lastUpdateCoord.current) {
-        setCurrentLocation({ latitude, longitude });
-        console.log("Interval loc update geo hash: ", geoHash)
-        lastUpdateCoord.current = currentTime;
-        if (mainScreenState.state === "Available") {
-          GlobalServices.DriverPoll.Connect(geoHash);
+          fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+            method: "POST",
+            body: JSON.stringify({
+              lon: currentLocation.longitude,
+              lat: currentLocation.latitude,
+              g: "w3gv"
+            })
+          }).then(c => console.log("Update driver loc: ", c.status));
         }
 
       }
