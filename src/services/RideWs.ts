@@ -29,13 +29,15 @@ interface RideWsConstrucProps {
 
 class RideWs {
   private ws: WebSocket | undefined
-  readonly StatusMsg = {
+  static readonly StatusMsg = {
     DriverFound: "DRF߷",
     NoDriver: "NDR߷",
     DriverCancel: "DCX߷",
     ClientCancel: "CCX߷",
     TripId: "TID߷",
     Message: "MSG߷",
+    DriverArrivePick: "DAP߷",
+    DriverArriveDrop: "DAD߷",
   }
   public client_listeners: RideWsConstrucProps
 
@@ -78,19 +80,19 @@ class RideWs {
     const cmd = msg.length <= 4 ? msg : msg.substring(0, 4)
 
     switch (cmd) {
-      case this.StatusMsg.NoDriver:
+      case RideWs.StatusMsg.NoDriver:
         this.Close();
         break
-      case this.StatusMsg.ClientCancel:
+      case RideWs.StatusMsg.ClientCancel:
         this.Close();
         break
-      case this.StatusMsg.DriverCancel:
+      case RideWs.StatusMsg.DriverCancel:
         this.Close();
         break
-      case this.StatusMsg.Message:
+      case RideWs.StatusMsg.Message:
         console.log("Driver msg: ", e.data);
         break;
-      case this.StatusMsg.DriverFound:
+      case RideWs.StatusMsg.DriverFound:
         try {
           const driver = JSON.parse(msg.substring(4))
           this.client_listeners?.onDriverFound?.(driver);
@@ -115,6 +117,11 @@ class RideWs {
     this.Close();
   }
 
+  public SendMessage(cmd: (keyof typeof RideWs.StatusMsg), value?: string) {
+    const msg: string = RideWs.StatusMsg[cmd] as string + (value ? value : "");
+    this.ws?.send(msg);
+  }
+
   public Close() {
     try {
       this.ws?.close();
@@ -124,11 +131,7 @@ class RideWs {
     this.ws = undefined;
   }
 
-  public Send(data: string | ArrayBuffer | ArrayBufferView | Blob) {
-    try { this.ws?.send(data) } catch (e) {
-      console.log("Web socket send error: ", e);
-    }
-  }
+
 
 }
 

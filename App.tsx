@@ -22,6 +22,8 @@ import LoginScreen from './src/screens/LoginSelectScreen';
 import { Provider } from 'react-redux';
 import ReduxStore from './src/redux/store';
 import { selectLoginState } from './src/redux/LoginState';
+import { DriverInfo } from './src/services/RideWs';
+import { RideReq } from './src/services/DriverWaitXHR';
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -30,7 +32,7 @@ export type RootStackParamList = {
   Login: undefined;
   Otp: { phoneNumber: string };
   Main: undefined;
-  Driving: { tripId: string, };
+  Driving: { trip_data: RideReq };
   Payment: { paymentId: string };
   CongratsPayment: { paymentId: string };
 }

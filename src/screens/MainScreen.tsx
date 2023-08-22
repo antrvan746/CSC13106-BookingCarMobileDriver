@@ -39,26 +39,36 @@ type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
-  const lastUpdateCoord = useRef<number>(0);
 
   const dispatch = useAppDispatch();
-
-  if (mainScreenState.state === "Unavailable") {
-    GlobalServices.DriverPoll.Close();
-  }
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [isInBottomSheet, setInBottomSheet] = useState(false);
 
   const handleStatusButtonPress = () => {
+    console.log(mainScreenState.state === "Unavailable", currentLocation)
+
+    if (mainScreenState.state === "Unavailable" && currentLocation) {
+      sendUpdateCoord(currentLocation.latitude, currentLocation.longitude);
+      GlobalServices.DriverPoll.Connect("w3gv");
+    }
+
     dispatch(setMainScreenState({
       state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
     }));
+
+
+
   };
 
   const handleStateChange = () => {
-    dispatch(setDrivingScreenState({
-      state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
-    }));
-    navigation.replace('Driving', { tripId: '123' });
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+    // dispatch(setDrivingScreenState({
+    //   state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
+    // }));
+    // navigation.replace('Driving', { tripId: '123' });
+    // // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
   const goToLoginScreen = () => {
@@ -71,13 +81,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
-  const [currentLocation, setCurrentLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+
 
   useEffect(() => {
-    lastUpdateCoord.current = Math.floor(Date.now() / 1000);
 
     const requestLocationPermission = async () => {
       try {
@@ -120,7 +126,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
             onPress: () => {
               GlobalServices.DriverPoll.Close();
               dispatch(setMainScreenState({ state: "Unavailable" }));
-              navigation.replace("Driving", { tripId: req.trip_id })
+              navigation.replace("Driving", { trip_data: req })
             }
           },
           {
@@ -130,9 +136,12 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         ]);
       return true;
     }
+
+    return () => {
+      GlobalServices.DriverPoll.listeners.onRideReq = undefined;
+    }
   }, []);
 
-  const [isInBottomSheet, setInBottomSheet] = useState(false);
   // Update the region prop whenever the currentLocation changes
   const region = !currentLocation ? undefined : {
     latitude: currentLocation.latitude,
@@ -140,6 +149,22 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
+
+  function sendUpdateCoord(latitude: number, longitude: number) {
+    const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
+    fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+      method: "POST",
+      headers: {
+        'Accept': '*',
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        lon: longitude,
+        lat: latitude,
+        g: "w3gv"
+      })
+    }).then(c => console.log("Update driver loc: ", c.status));
+  }
 
   function getCurrentLocation() {
     Geolocation.getCurrentPosition(
@@ -158,21 +183,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // Update the currentLocation state with the new user location
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
-      const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
       if (!currentLocation?.latitude || !currentLocation.longitude) {
         setCurrentLocation({ latitude, longitude });
-        fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
-          method: "POST",
-          headers: {
-            'Accept': '*',
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            lon: longitude,
-            lat: latitude,
-            g: "w3gv"
-          })
-        }).then(c => console.log("Update driver loc: ", c.status));
+        sendUpdateCoord(latitude, longitude);
         return
       }
 
@@ -180,17 +193,8 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         latitude, longitude,
         currentLocation.latitude, currentLocation.longitude) >= 100) {
         setCurrentLocation({ latitude, longitude });
-        console.log("Geohash: ", geoHash);
         if (mainScreenState.state === "Available") {
-          GlobalServices.DriverPoll.Connect(geoHash);
-          fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
-            method: "POST",
-            body: JSON.stringify({
-              lon: currentLocation.longitude,
-              lat: currentLocation.latitude,
-              g: "w3gv"
-            })
-          }).then(c => console.log("Update driver loc: ", c.status));
+          sendUpdateCoord(latitude, longitude);
         }
 
       }
@@ -227,7 +231,8 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         onTouchStart={(e) => { setInBottomSheet(true) }}
         onTouchEnd={() => { setInBottomSheet(false) }}
         style={styles.secondWrapper}>
-        <BottomSheet navigation={navigation} route={route} />
+        <BottomSheet navigation={navigation} route={route}
+          onStatusBtnPress={handleStatusButtonPress} />
       </View>
     </View>
   );
