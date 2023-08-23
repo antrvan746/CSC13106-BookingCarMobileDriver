@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { View, StyleSheet, Text, Animated } from 'react-native';
+import { View, StyleSheet, Text, Animated, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent, Polyline } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -176,16 +176,21 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
           showsUserLocation // enables the blue dot
           onUserLocationChange={handleUserLocationChange} // update the marker position
         >
-          <Marker coordinate={currentLocation} title="Current Location" />
+          <Marker coordinate={currentLocation} title="Current Location">
+            <Image source={require('../assets/icons/scooter-64.png')} style={{ height: 32, width: 32 }} />
+          </Marker>
           {/* Going to customer location */}
           {
             drivingScreenState.state === 'Arriving' && toPickRoute ?
               <>
-                <Marker description={route.params.trip_data.sadr} pinColor='yellow'
-                  coordinate={currentLocation} />
+                <Marker coordinate={currentLocation} title="Current Location">
+                  <Image source={require('../assets/icons/scooter-64.png')} style={{ height: 32, width: 32 }} />
+                </Marker>
                 <Marker description={route.params.trip_data.sadr} pinColor='green'
-                  coordinate={{ latitude: route.params.trip_data.slat, longitude: route.params.trip_data.slon }} />
-                <Polyline fillColor="hotpink" strokeWidth={5} strokeColor="hotpink"
+                  coordinate={{ latitude: route.params.trip_data.slat, longitude: route.params.trip_data.slon }}>
+                  <Image source={require('../assets/icons/rider-64.png')} style={{ height: 32, width: 32 }} />
+                </Marker>
+                <Polyline fillColor="#ded412" strokeWidth={5} strokeColor="#ded412"
                   coordinates={toPickRoute} />
               </>
               : null
@@ -197,9 +202,11 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
               <>
                 <Marker description={route.params.trip_data.sadr} pinColor='yellow'
                   coordinate={{ latitude: route.params.trip_data.slat, longitude: route.params.trip_data.slon }} />
-                <Marker description={route.params.trip_data.eadr} pinColor='green'
-                  coordinate={{ latitude: route.params.trip_data.elat, longitude: route.params.trip_data.elon }} />
-                <Polyline fillColor="hotpink" strokeWidth={5} strokeColor="hotpink"
+                <Marker description={route.params.trip_data.eadr}
+                  coordinate={{ latitude: route.params.trip_data.elat, longitude: route.params.trip_data.elon }}>
+                  <Image source={require('../assets/icons/destination-64.png')} style={{ height: 32, width: 32 }} />
+                </Marker>
+                <Polyline fillColor="#1bcc29" strokeWidth={5} strokeColor="#1bcc29"
                   coordinates={toDropRoute} />
               </>
               : null

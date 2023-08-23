@@ -42,28 +42,17 @@ function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
 
   const handleStatusButtonPress = () => {
     onStatusBtnPress();
-    // dispatch(setMainScreenState({
-    //   state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
-    // }));
-    //navigation.navigate('Driving', { tripId: '123' });
   };
 
   const handleStateChange = () => {
-    // dispatch(setDrivingScreenState({
-    //   state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
-    // }));
-    // navigation.replace('Driving', { tripId: '123' });
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
   const goToLoginScreen = () => {
     navigation.replace('Login');
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
   const goToWelcomeScreen = () => {
     navigation.replace('Welcome');
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
 
@@ -93,7 +82,6 @@ function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
 
     <View style={styles.statusBarWrapper}>
       <CustomStatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
-      <Text>{mainScreenState.state}</Text>
       {/* <Button title="Change state" onPress={handleStateChange} />
           <Button title="Login Screen" onPress={goToLoginScreen} />
           <Button title="Welcome Screen" onPress={goToWelcomeScreen} /> */}
@@ -180,16 +168,12 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
     position: 'absolute',
     paddingRight: 20,
     left: (WINDOW_WIDTH / 2) - (10),
     top: 40,
   },
   statusBarWrapper: {
-    // backgroundColor: '#F1F1F1',
-    // top: 250,
     top: 60,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,

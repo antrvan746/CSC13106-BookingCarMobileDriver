@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Image, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -30,11 +30,7 @@ import { selectDrivingScreenState, setDrivingScreenState } from '../redux/Drivin
 import { PERMISSIONS, request } from 'react-native-permissions';
 import GlobalServices from '../services/GlobalServices';
 
-
-
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
-
-
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
@@ -219,7 +215,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
           showsUserLocation // enables the blue dot
           onUserLocationChange={handleUserLocationChange} // update the marker position
         >
-          <Marker coordinate={currentLocation} title="Current Location" />
+          <Marker coordinate={currentLocation} title="Current Location">
+            <Image source={require('../assets/icons/scooter-64.png')} style={{ height: 32, width: 32 }} />
+          </Marker>
         </MapView>
       }
       <View style={styles.firstWrapper}>
@@ -241,13 +239,11 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 const styles = StyleSheet.create({
   containerWrapper: {
     flex: 1,
-    // position: 'relative',
   },
   firstWrapper: {
     position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-evenly',
     marginTop: 50,
   },
   secondWrapper: {
