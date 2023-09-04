@@ -24,6 +24,7 @@ import ReduxStore from './src/redux/store';
 import { selectLoginState } from './src/redux/LoginState';
 import { DriverInfo } from './src/services/RideWs';
 import { RideReq } from './src/services/DriverWaitXHR';
+import RegisterScreen from './src/screens/RegisterScreen';
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -44,7 +45,7 @@ function App(): JSX.Element {
     <Provider store={ReduxStore}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Main"
+          initialRouteName="Welcome"
           screenOptions={{ headerShown: false }}>
 
           <Stack.Screen
@@ -55,14 +56,13 @@ function App(): JSX.Element {
             name="Login"
             component={LoginScreen} />
 
-          {/* <Stack.Screen
-            name="Otp"
-            component={OtpScreen} /> */}
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen} />
 
           <Stack.Screen
             name="Main"
             component={MainScreen} />
-
 
           <Stack.Screen
             name="Driving"

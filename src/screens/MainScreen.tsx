@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Image, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Image, PermissionsAndroid, Platform, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -201,8 +201,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 
   return (
     <View style={styles.containerWrapper}>
-      {!currentLocation ? null :
+      <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight>
 
+      {!currentLocation ? null :
         <MapView
           scrollEnabled={!isInBottomSheet}
           style={{ flex: 1 }}
@@ -220,6 +221,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
           </Marker>
         </MapView>
       }
+
       <View style={styles.firstWrapper}>
         <Revenue />
         <View style={{ width: 210 }} />

@@ -161,6 +161,12 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
     }
   }
 
+  const mockData = {
+    name: "Testing client",
+    destination: "56/2 Dien Bien Phu, Phuong 26, Quan Binh Thanh",
+    price: "125000",
+  }
+
   return (
     <View style={styles.containerWrapper}>
       {currentLocation ? (

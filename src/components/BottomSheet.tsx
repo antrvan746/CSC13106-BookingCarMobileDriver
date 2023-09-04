@@ -8,7 +8,6 @@ import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
 import { RootStackParamList } from '../../App';
 
 // Redux
@@ -55,7 +54,7 @@ function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
     navigation.replace('Welcome');
   };
 
-
+  let buttonText = mainScreenState.state === 'Available' ? 'Tắt kết nối' : 'Bật kết nối';
   return (<>
 
     <View style={styles.buttonWrapper}>
@@ -71,7 +70,7 @@ function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
           <TouchableOpacity onPress={handleStatusButtonPress}>
             <View style={styles.statusWrapper}>
               <Icon name="power" size={32} color={'#F9F9F9'} />
-              <Text style={[styles.statusText]}>Bật kết nối</Text>
+              <Text style={[styles.statusText]}>{buttonText}</Text>
             </View>
           </TouchableOpacity>
         </View>
