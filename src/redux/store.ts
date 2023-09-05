@@ -4,6 +4,7 @@ import mainScreenStateSlice from './MainScreen';
 import drivingScreenStateSlice from './DrivingScreen';
 import paymentScreenStateSlice from './PaymentScreen';
 import LoginStateSlice from './LoginState';
+import locationIQApi from '../query/LocationIQ';
 
 const ReduxStore = configureStore({
   reducer: {
@@ -11,7 +12,11 @@ const ReduxStore = configureStore({
     drivingScreenState: drivingScreenStateSlice.reducer,
     paymentScreenState: paymentScreenStateSlice.reducer,
     loginState: LoginStateSlice.reducer,
+    [locationIQApi.reducerPath]: locationIQApi.reducer
   },
+  middleware: (getDafaultMiddleware) => getDafaultMiddleware().concat([
+    locationIQApi.middleware
+  ])
 });
 
 export type RootState = ReturnType<typeof ReduxStore.getState>;

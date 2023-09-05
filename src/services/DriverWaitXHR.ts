@@ -1,4 +1,4 @@
-interface RideReq {
+export interface RideReq {
   "slon": number
   "slat": number
   "sadr": string

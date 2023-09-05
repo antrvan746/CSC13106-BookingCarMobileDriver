@@ -19,6 +19,7 @@ import TripButtonBar from './TripButtonBar';
 import TripHandleButtons from './TripHandleButtons';
 import TripInfor from './TripInfor';
 import BottomBox from './Animations/BottomBox';
+import GlobalServices from '../services/GlobalServices';
 
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
@@ -29,146 +30,24 @@ const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = 50;
 
-const BottomSheet = ({ navigation, route }: Props): JSX.Element => {
-
-
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const lastGestureDy = useRef(0);
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        animatedValue.setOffset(lastGestureDy.current);
-      },
-      onPanResponderMove: (e, gesture) => {
-        animatedValue.setValue(gesture.dy);
-      },
-      onPanResponderRelease: (e, gesture) => {
-        animatedValue.flattenOffset();
-        lastGestureDy.current += gesture.dy;
-        // if (lastGestureDy.current < MAX_UPWARD_TRANSLATE_Y) {
-        //   lastGestureDy.current = MAX_UPWARD_TRANSLATE_Y;
-        // } else if (lastGestureDy.current > MAX_DOWNWARD_TRANSLATE_Y) {
-        //   lastGestureDy.current = MAX_DOWNWARD_TRANSLATE_Y;
-        // }
-
-        if (gesture.dy > 0) {
-          // dragging down
-          if (gesture.dy <= DRAG_THRESHOLD) {
-            springAnimation('up');
-          } else {
-            springAnimation('down');
-          }
-        } else {
-          // dragging up
-          if (gesture.dy >= -DRAG_THRESHOLD) {
-            springAnimation('down');
-          } else {
-            springAnimation('up');
-          }
-        }
-      },
-    }),
-  ).current;
-
-  const springAnimation = (direction: 'up' | 'down') => {
-    console.log('direction', direction);
-    lastGestureDy.current =
-      direction === 'down' ? MAX_DOWNWARD_TRANSLATE_Y : MAX_UPWARD_TRANSLATE_Y;
-    Animated.spring(animatedValue, {
-      toValue: lastGestureDy.current,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const bottomSheetAnimation = {
-    transform: [
-      {
-        translateY: animatedValue.interpolate({
-          inputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
-          outputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
-          extrapolate: 'clamp',
-        }),
-      },
-    ],
-  };
-
-  const dispatch = useAppDispatch();
-  const drivingScreenState = useAppSelector(selectDrivingScreenState);
-  let buttonText = 'Đã đến';
-
-  const handleTripStateButtonPress = () => {
-    if (drivingScreenState.state === 'Arriving') {
-      buttonText = 'Đã đón';
-      dispatch(setDrivingScreenState({ state: 'Arrived' }));
-    } else if (drivingScreenState.state === 'Arrived') {
-      buttonText = 'Đã trả';
-      dispatch(setDrivingScreenState({ state: 'Carrying' }));
-    } else if (drivingScreenState.state === 'Carrying') {
-      buttonText = 'Đã đến';
-      dispatch(setDrivingScreenState({ state: 'Finished' }));
-      dispatch(setDrivingScreenState({ state: 'Arriving' }));
-      dispatch(setPaymentScreenState({ state: 'InProgress' }));
-      navigation.navigate('Payment', { paymentId: '1238721267' });
-    }
-    // else if (drivingScreenState.state === 'Finished') {
-    //   dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    // }
-  };
-
-  const handleOffButtonPress = () => {
-    dispatch(setMainScreenState({ state: 'Unavailable' }));
-    dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    navigation.replace('Main');
-  };
-
-  return (
-    <View style={styles.container} {...panResponder.panHandlers}>
-      <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
-        <View style={styles.draggableArea} >
-          <View style={styles.dragHandle} />
-        </View>
-        <View style={styles.secondWrapper}>
-          <View style={styles.drivingStatusComponent}>
-            <DrivingStatus />
-          </View>
-
-          <View style={styles.seperateLine} />
-
-          <View style={styles.tripInforComponent}>
-            <TripInfor />
-          </View>
-
-          <View style={styles.seperateLine} />
-
-          <View style={styles.tripButtonBarComponent}>
-            <TripButtonBar />
-          </View>
-          <View style={styles.tripHandleButtonsComponent}>
-            <TripHandleButtons buttonText={buttonText}
-              handleTripState={handleTripStateButtonPress}
-              handleOffState={handleOffButtonPress} />
-          </View>
-        </View>
-      </Animated.View>
-    </View>
-  );
-};
 
 function BottomSheet2({ navigation, route }: Props): JSX.Element {
   const dispatch = useAppDispatch();
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
   let buttonText = 'Đã đến';
-
+  //console.log(drivingScreenState.state);
   const handleTripStateButtonPress = () => {
     if (drivingScreenState.state === 'Arriving') {
       buttonText = 'Đã đón';
+      GlobalServices.RideWs.SendMessage("DriverArrivePick");
       dispatch(setDrivingScreenState({ state: 'Arrived' }));
     } else if (drivingScreenState.state === 'Arrived') {
       buttonText = 'Đã trả';
       dispatch(setDrivingScreenState({ state: 'Carrying' }));
     } else if (drivingScreenState.state === 'Carrying') {
       buttonText = 'Đã đến';
+      GlobalServices.RideWs.SendMessage("DriverArriveDrop");
+
       dispatch(setDrivingScreenState({ state: 'Finished' }));
       dispatch(setDrivingScreenState({ state: 'Arriving' }));
       dispatch(setPaymentScreenState({ state: 'InProgress' }));

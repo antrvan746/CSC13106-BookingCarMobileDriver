@@ -1,27 +1,46 @@
 /* eslint-disable prettier/prettier */
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native';
 import React, { Component } from 'react';
 
-export class DrivingStatus extends Component {
-  render() {
-    return (
-      <View style={styles.statusWrapper}>
-        <View style={styles.locationInfor}>
-          <Text>DrivingStatus</Text>
-          <Text>Địa điểm</Text>
-        </View>
+const DrivingStatus = () => {
+  function onPress() {
+    const startLatitude = 10.78825445546148; // Replace with your start latitude
+    const startLongitude = 106.69380051915194; // Replace with your start longitude
+    const endLatitude = 10.775111871794604; // Replace with your end latitude
+    const endLongitude = 106.69234499244654; // Replace with your end longitude
 
-        <View style={styles.stepInfor}>
-          <Text>Đón khách</Text>
-          <Text>GrabBike</Text>
-        </View>
-        <View style={styles.nagivateButton}>
-          <Text>DrivingStatus</Text>
-          <Text>Điều hướng</Text>
-        </View>
-      </View>
-    );
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLatitude},${startLongitude}&destination=${endLatitude},${endLongitude}&travelmode=driving`;
+
+    Linking.canOpenURL(googleMapsUrl).then(supported => {
+      if (supported) {
+        Linking.openURL(googleMapsUrl);
+      } else {
+        console.error("Google Maps is not available on this device.");
+      }
+    });
   }
+  return (
+    <View style={styles.statusWrapper}>
+      <View style={styles.locationInfor}>
+        <Text>DrivingStatus</Text>
+        <Text>Địa điểm</Text>
+      </View>
+
+      <View style={styles.stepInfor}>
+        <Text>Đón khách</Text>
+        <Text>GrabBike</Text>
+      </View>
+      <View style={styles.nagivateButton}>
+        <Text>Chỉ đường</Text>
+        <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
+          <Image
+            source={require('../assets/icons/navigator-64.png')} // Replace with the actual path to your image
+            style={styles.buttonImage}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -40,6 +59,13 @@ const styles = StyleSheet.create({
   nagivateButton: {
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  buttonContainer: {
+
+  },
+  buttonImage: {
+    width: 24,
+    height: 24,
   },
 });
 

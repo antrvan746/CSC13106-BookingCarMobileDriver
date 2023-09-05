@@ -124,20 +124,25 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
 }
 
 function LoginScreen({ navigation, route }: StackScreenProps) {
-  const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
-    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
-    //dispatch(setLoginState({ user }));
-    if (!user) {
-      return
-    }
+  async function getDriverInfor(driverId: string | null) {
+    const apiUrl = `http://10.0.2.2:3000/api/drivers/${driverId}`;
 
-    // Send the user's data to the server
-    const loginData = {
-      phone: user.phoneNumber,
-      name: user.displayName || "Driver Test",
-    };
-    fetch('http://10.0.2.2:3000/api/drivers', {
-      method: 'POST',
+    return fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((driverInfo) => driverInfo)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async function sendDriverInforToServer(loginData: any) {
+    fetch('http://10.0.2.2:3000/api/drivers/${driverPhone}', {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -152,6 +157,36 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
       .catch((error) => {
         console.error('Error sending login info:', error);
       });
+  }
+
+  const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
+    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
+    //dispatch(setLoginState({ user }));
+    if (!user) {
+      return
+    }
+
+    const loginData = {
+      phone: user.phoneNumber,
+      name: user.displayName || "Driver Test",
+    }
+
+    getDriverInfor(loginData.phone)
+      .then((driverInfo) => {
+        console.log('Driver Info:', driverInfo);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+    sendDriverInforToServer(loginData)
+      .then((driverInfo) => {
+        console.log('Driver Info:', driverInfo);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
 
     navigation.replace('Main');
   };

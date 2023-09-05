@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Image, PermissionsAndroid, Platform, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -30,35 +30,41 @@ import { selectDrivingScreenState, setDrivingScreenState } from '../redux/Drivin
 import { PERMISSIONS, request } from 'react-native-permissions';
 import GlobalServices from '../services/GlobalServices';
 
-
-
 type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
-
-
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
-  const lastUpdateCoord = useRef<number>(0);
 
   const dispatch = useAppDispatch();
-
-  if (mainScreenState.state === "Unavailable") {
-    GlobalServices.DriverPoll.Close();
-  }
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [isInBottomSheet, setInBottomSheet] = useState(false);
 
   const handleStatusButtonPress = () => {
+    console.log(mainScreenState.state === "Unavailable", currentLocation)
+
+    if (mainScreenState.state === "Unavailable" && currentLocation) {
+      sendUpdateCoord(currentLocation.latitude, currentLocation.longitude);
+      GlobalServices.DriverPoll.Connect("w3gv");
+    }
+
     dispatch(setMainScreenState({
       state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
     }));
+
+
+
   };
 
   const handleStateChange = () => {
-    dispatch(setDrivingScreenState({
-      state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
-    }));
-    navigation.replace('Driving', { tripId: '123' });
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
+    // dispatch(setDrivingScreenState({
+    //   state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
+    // }));
+    // navigation.replace('Driving', { tripId: '123' });
+    // // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
   const goToLoginScreen = () => {
@@ -71,13 +77,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
   };
 
-  const [currentLocation, setCurrentLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+
 
   useEffect(() => {
-    lastUpdateCoord.current = Math.floor(Date.now() / 1000);
 
     const requestLocationPermission = async () => {
       try {
@@ -120,7 +122,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
             onPress: () => {
               GlobalServices.DriverPoll.Close();
               dispatch(setMainScreenState({ state: "Unavailable" }));
-              navigation.replace("Driving", { tripId: req.trip_id })
+              navigation.replace("Driving", { trip_data: req })
             }
           },
           {
@@ -130,9 +132,12 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         ]);
       return true;
     }
+
+    return () => {
+      GlobalServices.DriverPoll.listeners.onRideReq = undefined;
+    }
   }, []);
 
-  const [isInBottomSheet, setInBottomSheet] = useState(false);
   // Update the region prop whenever the currentLocation changes
   const region = !currentLocation ? undefined : {
     latitude: currentLocation.latitude,
@@ -140,6 +145,22 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
+
+  function sendUpdateCoord(latitude: number, longitude: number) {
+    const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
+    fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+      method: "POST",
+      headers: {
+        'Accept': '*',
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        lon: longitude,
+        lat: latitude,
+        g: "w3gv"
+      })
+    }).then(c => console.log("Update driver loc: ", c.status));
+  }
 
   function getCurrentLocation() {
     Geolocation.getCurrentPosition(
@@ -158,21 +179,18 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     // Update the currentLocation state with the new user location
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
-      const currentTime = Math.floor(Date.now() / 1000);
-      const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
-      if (currentLocation?.latitude !== latitude || currentLocation.longitude !== longitude) {
+      if (!currentLocation?.latitude || !currentLocation.longitude) {
         setCurrentLocation({ latitude, longitude });
-        console.log("Geohash: ", geoHash);
-        if (mainScreenState.state === "Available") {
-          GlobalServices.DriverPoll.Connect(geoHash);
-        }
+        sendUpdateCoord(latitude, longitude);
+        return
+      }
 
-      } else if (currentTime >= 10 + lastUpdateCoord.current) {
+      if (GlobalServices.GeoHash.distance_meters(
+        latitude, longitude,
+        currentLocation.latitude, currentLocation.longitude) >= 100) {
         setCurrentLocation({ latitude, longitude });
-        console.log("Interval loc update geo hash: ", geoHash)
-        lastUpdateCoord.current = currentTime;
         if (mainScreenState.state === "Available") {
-          GlobalServices.DriverPoll.Connect(geoHash);
+          sendUpdateCoord(latitude, longitude);
         }
 
       }
@@ -183,8 +201,9 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 
   return (
     <View style={styles.containerWrapper}>
-      {!currentLocation ? null :
+      <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight>
 
+      {!currentLocation ? null :
         <MapView
           scrollEnabled={!isInBottomSheet}
           style={{ flex: 1 }}
@@ -197,9 +216,12 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
           showsUserLocation // enables the blue dot
           onUserLocationChange={handleUserLocationChange} // update the marker position
         >
-          <Marker coordinate={currentLocation} title="Current Location" />
+          <Marker coordinate={currentLocation} title="Current Location">
+            <Image source={require('../assets/icons/scooter-64.png')} style={{ height: 32, width: 32 }} />
+          </Marker>
         </MapView>
       }
+
       <View style={styles.firstWrapper}>
         <Revenue />
         <View style={{ width: 210 }} />
@@ -209,7 +231,8 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         onTouchStart={(e) => { setInBottomSheet(true) }}
         onTouchEnd={() => { setInBottomSheet(false) }}
         style={styles.secondWrapper}>
-        <BottomSheet navigation={navigation} route={route} />
+        <BottomSheet navigation={navigation} route={route}
+          onStatusBtnPress={handleStatusButtonPress} />
       </View>
     </View>
   );
@@ -218,13 +241,11 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 const styles = StyleSheet.create({
   containerWrapper: {
     flex: 1,
-    // position: 'relative',
   },
   firstWrapper: {
     position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-evenly',
     marginTop: 50,
   },
   secondWrapper: {

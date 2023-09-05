@@ -6,8 +6,16 @@ interface SocketListener {
   onClose: ((e: WebSocketCloseEvent) => void)
 }
 
-interface DriverInfo {
-  driver_id: string
+export interface DriverInfo {
+  "slon": number,
+  "slat": number,
+  "sadr": string,
+
+  "elon": number,
+  "elat": number,
+  "eadr": string,
+
+  "user_id": string
 }
 
 interface RideWsConstrucProps {
@@ -21,11 +29,15 @@ interface RideWsConstrucProps {
 
 class RideWs {
   private ws: WebSocket | undefined
-  readonly StatusMsg = {
-    DriverFound: "⚼",
-    NoDriver: "⚼⚼⚼⚼",
-    DriverCancel: "⚼⚼⚼",
-    ClientCancel: "⚼⚼",
+  static readonly StatusMsg = {
+    DriverFound: "DRF߷",
+    NoDriver: "NDR߷",
+    DriverCancel: "DCX߷",
+    ClientCancel: "CCX߷",
+    TripId: "TID߷",
+    Message: "MSG߷",
+    DriverArrivePick: "DAP߷",
+    DriverArriveDrop: "DAD߷",
   }
   public client_listeners: RideWsConstrucProps
 
@@ -45,7 +57,7 @@ class RideWs {
     }
 
     console.log("Creating websocket")
-    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=cool_driver`, "ws");
+    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=test_driver`, "ws");
     this.ws.onopen = this._onWsOpen;
     this.ws.onmessage = this._onWsMessage;
     this.ws.onerror = this._onWsError;
@@ -65,22 +77,31 @@ class RideWs {
     }
     const msg = e.data as string
     console.log("Web socket message: ", e.data);
+    const cmd = msg.length <= 4 ? msg : msg.substring(0, 4)
 
-    switch (msg) {
-      case this.StatusMsg.NoDriver:
+    switch (cmd) {
+      case RideWs.StatusMsg.NoDriver:
         this.Close();
         break
-      case this.StatusMsg.ClientCancel:
+      case RideWs.StatusMsg.ClientCancel:
         this.Close();
         break
-      case this.StatusMsg.DriverCancel:
+      case RideWs.StatusMsg.DriverCancel:
         this.Close();
+        break
+      case RideWs.StatusMsg.Message:
+        console.log("Driver msg: ", e.data);
+        break;
+      case RideWs.StatusMsg.DriverFound:
+        try {
+          const driver = JSON.parse(msg.substring(4))
+          this.client_listeners?.onDriverFound?.(driver);
+        } catch (e) {
+          console.log(e)
+        }
         break
       default:
-        if (msg[0] === "⚼") {
-          this.client_listeners.onDriverFound?.(JSON.parse(msg.substring(1)))
-        }
-        this.client_listeners.onMessage?.(e)
+        console.log("Unknow ws cmd:", cmd, msg)
     }
 
   }
@@ -96,6 +117,11 @@ class RideWs {
     this.Close();
   }
 
+  public SendMessage(cmd: (keyof typeof RideWs.StatusMsg), value?: string) {
+    const msg: string = RideWs.StatusMsg[cmd] as string + (value ? value : "");
+    this.ws?.send(msg);
+  }
+
   public Close() {
     try {
       this.ws?.close();
@@ -105,11 +131,7 @@ class RideWs {
     this.ws = undefined;
   }
 
-  public Send(data: string | ArrayBuffer | ArrayBufferView | Blob) {
-    try { this.ws?.send(data) } catch (e) {
-      console.log("Web socket send error: ", e);
-    }
-  }
+
 
 }
 

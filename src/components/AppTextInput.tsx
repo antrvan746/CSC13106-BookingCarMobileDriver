@@ -19,18 +19,19 @@ const AppTextInput: React.FC<TextInputProps> = ({ ...otherProps }) => {
   const [focused, setFocused] = useState<boolean>(false);
   return (
     <TextInput
-      keyboardType="numeric"
+      // keyboardType="numeric"
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       placeholderTextColor={Colors.darkText}
       style={[
         {
+          height: 50,
           fontFamily: Font["poppins-regular"],
           fontSize: FontSize.small,
-          padding: Spacing * 2,
-          backgroundColor: Colors.lightPrimary,
+          paddingLeft: Spacing * 2,
+          backgroundColor: Colors.onPrimary,
           borderRadius: Spacing,
-          marginVertical: Spacing,
+          marginVertical: Spacing / 2,
         },
         focused && {
           borderWidth: 3,
