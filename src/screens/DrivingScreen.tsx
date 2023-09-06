@@ -3,34 +3,37 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { View, StyleSheet, Text, Animated, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
+
+// Components
+import DrivingBottomSheet from '../components/DrivingBottomSheet';
+
+// Map & Location
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent, Polyline } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { LocationIQ_Directions, useLazyGetRouteQuery } from "../query/LocationIQ";
 import polyline from "@mapbox/polyline"
-
+import { LocationIQ_Directions, useLazyGetRouteQuery } from "../query/LocationIQ";
 
 // Navigations
-import { RootStackParamList } from '../../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/Screen';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
-import DrivingBottomSheet from '../components/DrivingBottomSheet';
-import GlobalServices from '../services/GlobalServices';
-import { DriverInfo } from '../services/RideWs';
+
 import { current } from '@reduxjs/toolkit';
 
-interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
+// Service
+import { DriverInfo } from '../services/RideWs';
+import GlobalServices from '../services/GlobalServices';
 
+interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
 const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
   const [isInBottomSheet, setInBottomSheet] = useState(false);
   const [mapLayoutReady, setMapLayoutReady] = useState(false);
   const [routeTrigger, routing] = useLazyGetRouteQuery();
-
   const [toPickRoute, setToPickRoute] = useState<{ latitude: number, longitude: number }[]>();
   const [toDropRoute, setToDropRoute] = useState<{ latitude: number, longitude: number }[]>();
 
@@ -38,21 +41,6 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
     latitude: number;
     longitude: number;
   } | null>(null);
-
-  const [animation, setAnimation] = useState<{
-    transform: {
-      translateY: Animated.AnimatedInterpolation<string | number>;
-    }[]
-  } | {}>({});
-
-  const region = currentLocation
-    ? {
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }
-    : undefined;
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
@@ -95,9 +83,6 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
       console.log(`Drop off data lat:${d.elat}, lon:${d.elon}, adr:${d.eadr})`);
     }
     GlobalServices.RideWs.Connect(route.params.trip_data.trip_id);
-
-
-
   }, []);
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {

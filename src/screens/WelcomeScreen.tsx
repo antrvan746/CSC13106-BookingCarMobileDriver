@@ -9,19 +9,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
+
+// Constants
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
 import Colors from '../constants/Colors';
 import Font from '../constants/Font';
 const { height } = Dimensions.get('window');
 
+// Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
-
+import { RootStackParamList } from '../types/Screen';
 type WelcomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
+// Context
+import { useUserData } from '../contexts/UserDataContext';
+
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } }) => {
+  const { driverData, vehicleData } = useUserData();
+
+  useEffect(() => {
+    if (driverData || vehicleData) {
+      navigate('Main');
+    }
+  }, [driverData, vehicleData, navigate]);
+
   return (
     <SafeAreaView>
       <View
@@ -44,7 +57,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity
-            onPress={() => navigate('Login')}
+            onPress={() => navigate('Login', {})}
             style={styles.loginButton}>
             <Text style={styles.loginButtonText}>
               Login
@@ -74,6 +87,9 @@ const styles = StyleSheet.create({
   titleWraper: {
     paddingHorizontal: Spacing * 4,
     paddingTop: Spacing * 5,
+  },
+  loading: {
+
   },
   titleText: {
     fontSize: FontSize.xxLarge,

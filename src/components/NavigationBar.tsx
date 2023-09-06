@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
 const NavigationBar = () => {
   const [isPressed, setIsPressed] = useState(false);
 
@@ -68,7 +68,11 @@ const NavigationBar = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.more}>
-        <TouchableOpacity onPress={handlePress} style={styles.servicesButton}>
+        <TouchableOpacity onPress={() => {
+          if (auth().currentUser) {
+            auth().signOut();
+          }
+        }} style={styles.servicesButton}>
           <View style={styles.logo_center}>
             <View style={styles.icon}>
               <Icon name="more-horiz" color={'#2F2F2C'} size={18} />

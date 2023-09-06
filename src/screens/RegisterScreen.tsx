@@ -1,19 +1,20 @@
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, } from "react-native";
 import React, { useState } from "react";
+import PhoneInput from "react-native-phone-number-input";
+import { SelectList } from 'react-native-dropdown-select-list'
+
+// Contants
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontSize";
 import Colors from "../constants/Colors";
 import Font from "../constants/Font";
 import { WINDOW_WIDTH } from '../constants/Dimenstions';
 
-// import { Ionicons } from "@expo/vector-icons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types/Screen";
-import { StackScreenProps } from '../types/Screen';
+// Components
 import AppTextInput from "../components/AppTextInput";
-import { SelectList } from 'react-native-dropdown-select-list'
 
-type Props = NativeStackScreenProps<RootStackParamList, "Register">;
+// Navigation
+import { StackScreenProps } from '../types/Screen';
 
 function RegisterScreen({ navigation, route }: StackScreenProps) {
   const [vehicleSelected, setvehicleSelected] = useState("");
@@ -37,14 +38,19 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
     rating: 5.0,
   }
 
-  async function sendDriverInforToServer(data: any) {
+  async function sendDriverInforToServer() {
     try {
       const response = await fetch('http://10.0.2.2:3000/api/drivers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name,
+          phone: phoneNumber,
+          email,
+          password: "",
+        }),
       });
 
       if (!response.ok) {
@@ -54,17 +60,9 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
       }
 
       const responseData = await response.json();
-      console.log('Registration driver successful:', responseData);
+      // console.log('Registration driver successful:', responseData);
+      return responseData;
 
-      const registVehicleData = {
-        driver_id: responseData.id,
-        plate_number: plateNumber,
-        model: model,
-        color: color,
-        type: vehicleSelected,
-      };
-
-      return registVehicleData;
     } catch (error) {
       console.error('Error during registration:', error);
       return null;
@@ -87,22 +85,27 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
       });
   }
 
-  async function registerVehicle(data: any) {
+  async function registerVehicle(driver_id: string) {
     try {
       const response = await fetch('http://10.0.2.2:3000/api/vehicles', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          driver_id: driver_id,
+          plate_number: plateNumber,
+          model: model,
+          color: color,
+          type: vehicleSelected,
+        }),
       });
-      console.log(JSON.stringify(data))
       const responseData = await response.json();
 
       if (!response.ok) {
         console.error('Server returned an error (create vehicle):', responseData);
       } else {
-        console.log('Registration vehicle successful:', responseData);
+        // console.log('Registration vehicle successful:', responseData);
       }
     } catch (error) {
       console.error('Error during create vehicle', error);
@@ -111,13 +114,20 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
 
   async function register() {
     try {
-      const registVehicleData = await sendDriverInforToServer(driverInfor);
-      await getDriverInfor(driverInfor.phone);
-      await registerVehicle(registVehicleData);
-      navigation.navigate("Main");
-
+      const driverData = await sendDriverInforToServer();
+      // console.log("Driver data: ", driverData)
+      if (driverData?.id) {
+        await registerVehicle(driverData.id);
+        navigation.navigate("Login", {
+          screen: "PhoneVerify",
+          params: {
+            phone: phoneNumber
+          }
+        });
+      }
+      //await getDriverInfor(driverInfor.phone);
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Error during registration:", JSON.stringify(error));
     }
   }
 
@@ -146,11 +156,19 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
           marginBottom: 100,
         }}
       >
-        <Text style={{ textAlign: 'center', fontSize: 18, color: Colors.green, opacity: 0.7 }}>Driver Information</Text>
+        <Text style={{ textAlign: 'center', fontSize: 18, color: Colors.green, opacity: 0.7 }}>
+          Driver Information
+        </Text>
         <Text style={styles.label}>Full Name</Text>
         <AppTextInput placeholder="Nguyen Van A" onChangeText={(text) => setName(text)} />
         <Text style={styles.label}>Phone Number</Text>
-        <AppTextInput placeholder="0123456789" onChangeText={(text) => setPhoneNumber(text)} />
+        <PhoneInput
+          defaultCode="VN"
+          onChangeFormattedText={v => {
+            if (v.length <= "+84123456789".length) {
+              setPhoneNumber(v);
+            }
+          }} />
         <Text style={styles.label}>Email</Text>
         <AppTextInput placeholder="taixe@gmail.com" onChangeText={(text) => setEmail(text)} />
         <Text style={styles.label}>Password</Text>
@@ -158,7 +176,9 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
         <Text style={styles.label}>Confirm Password</Text>
         <AppTextInput placeholder="" />
 
-        <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 18, color: Colors.green, opacity: 0.7 }}>Vehicle Information</Text>
+        <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 18, color: Colors.green, opacity: 0.7 }}>
+          Vehicle Information
+        </Text>
 
         <SelectList
           maxHeight={200}
@@ -174,17 +194,9 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
         <AppTextInput placeholder="" onChangeText={(text) => setColor(text)} />
       </View>
 
-      <TouchableOpacity
-        style={styles.registerButton}
-        onPress={register}
-      >
-        <Text
-          style={styles.registerButtonText}
-        >
-          Sign up
-        </Text>
+      <TouchableOpacity style={styles.registerButton} onPress={register}>
+        <Text style={styles.registerButtonText}> Sign up </Text>
       </TouchableOpacity>
-
     </ScrollView>
   );
 };

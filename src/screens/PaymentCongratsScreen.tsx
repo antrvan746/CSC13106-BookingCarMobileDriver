@@ -2,14 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { View, StyleSheet, Image, Text } from 'react-native';
 import React from 'react';
+
+// Components
 import PaymentCongratsHeader from '../components/PaymentCongratsHeader';
 import PaymentMethod from '../components/PaymentMethod';
 import FinishButton from '../components/FinishButton';
 
 // Navigations
-import { RootStackParamList } from '../../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { RootStackParamList } from '../types/Screen';
 interface Props extends NativeStackScreenProps<RootStackParamList, 'CongratsPayment'> {
 
 }

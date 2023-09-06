@@ -1,18 +1,22 @@
 /* eslint-disable prettier/prettier */
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { NavLoginNames, LoginStackParam } from "./Login"
 // Screen name: take appropriate decision to use navigate to navigate between screens or only change component content
-export type NavScreenNames = 'Register' | 'Login' | 'Main' | 'Driving' | 'Payment' | 'CongratsPayment';
+export type NavScreenNames = 'Register' | 'Login' | 'Main' | 'Profile' | 'Driving' | 'Payment' | 'CongratsPayment' | NavLoginNames;
 interface StackScreenProps
   extends NativeStackScreenProps<RootStackParamList, NavScreenNames> { }
 
 export type RootStackParamList = {
-  Welcome: StackScreenProps;
-  SelectLoginMethod: StackScreenProps;
-  Login: StackScreenProps;
-  Otp: StackScreenProps;
-  Register: StackScreenProps;
-  Main: ScreenWrapperProps;
-  Driving: ScreenWrapperProps;
-  Payment: ScreenWrapperProps;
-};
+  Welcome: undefined;
+  SelectLoginMethod: undefined;
+  Login: {
+    screen?: string,
+    params?: any
+  };
+  Register: undefined;
+  Main: undefined;
+  Profile: undefined;
+  Driving: { trip_data: RideReq };
+  Payment: { paymentId: string };
+  CongratsPayment: { paymentId: string };
+} & LoginStackParam;

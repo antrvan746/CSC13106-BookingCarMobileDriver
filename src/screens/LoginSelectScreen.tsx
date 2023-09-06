@@ -4,37 +4,41 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
-import { StackScreenProps } from '../types/Screen';
+import { Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { LoginStackParam, LoginStackSreenProps } from '../types/Login';
-import PhoneLogin from './PhoneLoginScreen';
-import PhoneLoginOTP from './PhoneOTPScreen';
-import { useAppDispatch, useAppSelector } from '../redux/hook';
-import { selectLoginState, setLoginState } from '../redux/LoginState';
+
+// Constants
+import Colors from '../constants/Colors';
+import Font from '../constants/Font';
+const { height } = Dimensions.get('window');
+
+// Firebase
 import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-import Colors from '../constants/Colors';
-import { Dimensions } from 'react-native';
-import Font from '../constants/Font';
-const { height } = Dimensions.get('window');
+// Screens
+import PhoneLogin from './PhoneLoginScreen';
+import PhoneLoginOTP from './PhoneOTPScreen';
 
-
+// Navigation
+import { StackScreenProps } from '../types/Screen';
 const NavStack = createNativeStackNavigator<LoginStackParam>();
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LoginStackParam, LoginStackSreenProps } from '../types/Login';
+
+// Redux
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectLoginState, setLoginState } from '../redux/LoginState';
 
 function GoogleLoginButton() {
   const dispatch = useAppDispatch();
   const onAuthStateChange: FBAuth.AuthListenerCallback = async function (userData) {
-    //console.log(userData);
     if (!userData) {
       dispatch(setLoginState({ user: null }));
       return;
     }
-    console.log('Login success');
     const { email, phoneNumber, photoURL, providerId, uid, displayName } = userData;
-    console.log('Getting location key');
     const locationIQKey = (await database().ref('/LocationIQ_KEY').once('value')).val();
     if (locationIQKey) {
       console.log('Login with locationIQ key', locationIQKey);
@@ -50,7 +54,7 @@ function GoogleLoginButton() {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChange);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, []);
 
   async function GoogleLoginPress() {
@@ -81,7 +85,6 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
   function selectLoginWithPhone() {
     navigation.navigate('Phone');
   }
-
   const loginState = useAppSelector(selectLoginState);
 
   function logout() {
@@ -124,79 +127,16 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
 }
 
 function LoginScreen({ navigation, route }: StackScreenProps) {
-  async function getDriverInfor(driverId: string | null) {
-    const apiUrl = `http://10.0.2.2:3000/api/drivers/${driverId}`;
-
-    return fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP Error: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((driverInfo) => driverInfo)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  async function sendDriverInforToServer(loginData: any) {
-    fetch('http://10.0.2.2:3000/api/drivers/${driverPhone}', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginData),
-    })
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        console.log('Login info sent to server:', data);
-      })
-      .catch((error) => {
-        console.error('Error sending login info:', error);
-      });
-  }
-
   const onAuthStateChanged: FBAuth.AuthListenerCallback = function (user) {
-    console.log(user ? `Login successfully ${user.phoneNumber}` : 'Log out success fully');
-    //dispatch(setLoginState({ user }));
     if (!user) {
       return
     }
-
-    const loginData = {
-      phone: user.phoneNumber,
-      name: user.displayName || "Driver Test",
-    }
-
-    getDriverInfor(loginData.phone)
-      .then((driverInfo) => {
-        console.log('Driver Info:', driverInfo);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-    sendDriverInforToServer(loginData)
-      .then((driverInfo) => {
-        console.log('Driver Info:', driverInfo);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-
-    navigation.replace('Main');
   };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, []);
-
-
 
   return (
     <NavStack.Navigator initialRouteName="Select">
@@ -211,6 +151,7 @@ function LoginScreen({ navigation, route }: StackScreenProps) {
           (props) => <PhoneLogin {...props} />
         }
       </NavStack.Screen>
+
       <NavStack.Screen name="PhoneVerify">
         {
           (props) => <PhoneLoginOTP {...props} />

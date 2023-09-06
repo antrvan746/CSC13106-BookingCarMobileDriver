@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import {StyleSheet, Image, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 
 const UserAvatar = () => {
   const handlePress = () => {
@@ -9,12 +9,10 @@ const UserAvatar = () => {
 
   return (
     <View>
-      <TouchableOpacity onPress={handlePress} style={styles.userImage}>
-        <Image
-          source={require('../assets/icons/default_user.png')} // Replace with your image path
-          style={styles.userImage}
-        />
-      </TouchableOpacity>
+      <Image
+        source={require('../assets/icons/default_user.png')} // Replace with your image path
+        style={styles.userImage}
+      />
     </View>
   );
 };

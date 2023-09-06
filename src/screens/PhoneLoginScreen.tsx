@@ -4,16 +4,16 @@
 import React, { useState, useRef, createRef } from 'react';
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import { LoginStackSreenProps } from '../types/Login';
+
+// Constants
 import Colors from '../constants/Colors';
 import Font from '../constants/Font';
 
-
+// Navigation
+import { LoginStackSreenProps } from '../types/Login';
 
 function PhoneLogin({ navigation, route }: LoginStackSreenProps) {
-
   const [validNumber, setValidNumber] = useState<boolean>(false);
-
   const phoneRef = createRef<PhoneInput>();
   const formatedPhone = useRef<string>('');
 
@@ -25,9 +25,8 @@ function PhoneLogin({ navigation, route }: LoginStackSreenProps) {
 
   function onFormatedPhoneChange(phone: string) {
     formatedPhone.current = phone;
-
     //Exception testing number
-    if (phone === '+84799192229') {
+    if (phone.length === '+84799192229'.length) {
       setValidNumber(true);
     }
   }
@@ -48,7 +47,6 @@ function PhoneLogin({ navigation, route }: LoginStackSreenProps) {
         textContainerStyle={{ backgroundColor: 'transparent', padding: 0, ...styles.bottomBlackBorder }}
         containerStyle={styles.phoneInputContainer} defaultCode="VN" />
     </View>
-
 
     <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD"
       disabled={!validNumber}
