@@ -29,19 +29,15 @@ import GlobalServices from '../services/GlobalServices';
 
 // Context
 import { useContext } from 'react';
-import { UserDataContext } from '../contexts/UserDataContext';
+import { UserDataContext, useUserData } from '../contexts/UserDataContext';
 import { RootStackParamList } from '../types/Screen';
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
   const userData = useContext(UserDataContext);
-  const { driverData, vehicleData } = userData;
+  const { driverData, vehicleData } = useUserData();
 
-  useEffect(() => {
-    // console.log('Id Context Data: ', driverData.id);
-    console.log('Driver Context Data: ', driverData);
-    console.log('Vehicle Context Data: ', vehicleData);
 
-  }, [driverData, vehicleData]);
+
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
