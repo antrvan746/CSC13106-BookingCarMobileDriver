@@ -2,37 +2,46 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Image, PermissionsAndroid, Platform, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, PermissionsAndroid, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { PERMISSIONS, request } from 'react-native-permissions';
+
+// Map & Location
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 
 // Componenents
 import Revenue from '../components/Revenue';
-import Layer from '../components/Layer';
-import StatusBar from '../components/CustomStatusBar';
-import StatusButton from '../components/StatusButton';
 import UserAvatar from '../components/UserAvatar';
-import NavigationBar from '../components/NavigationBar';
 import BottomSheet from '../components/BottomSheet';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import { RootStackParamList } from '../../App';
+type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
-import { PERMISSIONS, request } from 'react-native-permissions';
+
+// Services
 import GlobalServices from '../services/GlobalServices';
 
-type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
+// Context
+import { useContext } from 'react';
+import { UserDataContext } from '../contexts/UserDataContext';
+import { RootStackParamList } from '../types/Screen';
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
+  const userData = useContext(UserDataContext);
+  const { driverData, vehicleData } = userData;
+
+  useEffect(() => {
+    // console.log('Id Context Data: ', driverData.id);
+    console.log('Driver Context Data: ', driverData);
+    console.log('Vehicle Context Data: ', vehicleData);
+
+  }, [driverData, vehicleData]);
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
@@ -54,30 +63,11 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     dispatch(setMainScreenState({
       state: mainScreenState.state === 'Available' ? 'Unavailable' : 'Available',
     }));
-
-
-
   };
 
-  const handleStateChange = () => {
-    // dispatch(setDrivingScreenState({
-    //   state: drivingScreenState.state === 'Arriving' ? 'Arriving' : 'Arriving',
-    // }));
-    // navigation.replace('Driving', { tripId: '123' });
-    // // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
-  };
-
-  const goToLoginScreen = () => {
-    navigation.replace('Login');
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
-  };
-
-  const goToWelcomeScreen = () => {
-    navigation.replace('Welcome');
-    // navigation.navigate('Login', { accountPhoneNumber: '0827615245' });
-  };
-
-
+  const goToProfile = () => {
+    navigation.navigate("Profile")
+  }
 
   useEffect(() => {
 
@@ -196,12 +186,11 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
       }
       // console.log('Moving:', latitude, longitude);
     }
-
   };
 
   return (
     <View style={styles.containerWrapper}>
-      <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight>
+      {/* <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight> */}
 
       {!currentLocation ? null :
         <MapView
@@ -225,7 +214,8 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
       <View style={styles.firstWrapper}>
         <Revenue />
         <View style={{ width: 210 }} />
-        <UserAvatar />
+        <TouchableOpacity onPress={goToProfile}><UserAvatar /></TouchableOpacity>
+
       </View>
       <View
         onTouchStart={(e) => { setInBottomSheet(true) }}

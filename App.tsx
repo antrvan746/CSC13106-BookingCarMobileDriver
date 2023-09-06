@@ -25,60 +25,57 @@ import { selectLoginState } from './src/redux/LoginState';
 import { DriverInfo } from './src/services/RideWs';
 import { RideReq } from './src/services/DriverWaitXHR';
 import RegisterScreen from './src/screens/RegisterScreen';
-
-export type RootStackParamList = {
-  Welcome: undefined;
-  SelectLoginMethod: undefined;
-  Register: undefined;
-  Login: undefined;
-  Otp: { phoneNumber: string };
-  Main: undefined;
-  Driving: { trip_data: RideReq };
-  Payment: { paymentId: string };
-  CongratsPayment: { paymentId: string };
-}
+import ProfileScreen from './src/screens/ProfileScreen';
+import { UserDataProvider } from './src//contexts/UserDataContext';
+import { RootStackParamList } from './src/types/Screen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
   return (
-    <Provider store={ReduxStore}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Welcome"
-          screenOptions={{ headerShown: false }}>
+    <UserDataProvider>
+      <Provider store={ReduxStore}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Welcome"
+            screenOptions={{ headerShown: false }}>
 
-          <Stack.Screen
-            name="Welcome"
-            component={WelcomeScreen} />
+            <Stack.Screen
+              name="Welcome"
+              component={WelcomeScreen} />
 
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen} />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen} />
 
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen} />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen} />
 
-          <Stack.Screen
-            name="Main"
-            component={MainScreen} />
+            <Stack.Screen
+              name="Main"
+              component={MainScreen} />
 
-          <Stack.Screen
-            name="Driving"
-            component={DrivingScreen} />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen} />
 
-          <Stack.Screen
-            name="Payment"
-            component={PaymentScreen} />
+            <Stack.Screen
+              name="Driving"
+              component={DrivingScreen} />
 
-          <Stack.Screen
-            name="CongratsPayment"
-            component={PaymentCongratsScreen} />
+            <Stack.Screen
+              name="Payment"
+              component={PaymentScreen} />
 
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+            <Stack.Screen
+              name="CongratsPayment"
+              component={PaymentCongratsScreen} />
+
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </UserDataProvider>
   );
 }
 

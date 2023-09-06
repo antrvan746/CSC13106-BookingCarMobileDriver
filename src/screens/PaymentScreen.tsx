@@ -1,25 +1,27 @@
 /* eslint-disable prettier/prettier */
 import { View, StyleSheet, Text } from 'react-native';
 import React from 'react';
+
+// Components
 import PaymentHeader from '../components/PaymentHeader';
 import PaymentRiderInfor from '../components/PaymentRiderInfor';
 import PaymentSuccessButton from '../components/PaymentSuccessButton';
 import PaymentFailButton from '../components/PaymentFailButton';
 import PaymentPrice from '../components/PaymentPrice';
+import PaymentTotalCost from '../components/PaymentTotalCost';
+import PaymentNote from '../components/PaymentNote';
 
-// Navigations
-import { RootStackParamList } from '../../App';
+// Navigation
+import { RootStackParamList } from '../types/Screen';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+interface Props extends NativeStackScreenProps<RootStackParamList, 'Payment'> {
+}
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
-import PaymentTotalCost from '../components/PaymentTotalCost';
-import PaymentNote from '../components/PaymentNote';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-interface Props extends NativeStackScreenProps<RootStackParamList, 'Payment'> {
 
-}
 const PaymentScreen = ({ navigation, route }: Props): JSX.Element => {
   const { paymentId } = route.params;
   const paymentScreenState = useAppSelector(selectPaymentScreenState);

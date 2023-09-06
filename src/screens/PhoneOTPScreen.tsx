@@ -2,34 +2,49 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useRef, createRef, useEffect } from 'react';
-import { LoginStackSreenProps } from '../types/Login';
 import { Pressable, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
+
+// Firebase
 import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
+
+// Constants
 import Font from '../constants/Font';
 import Colors from '../constants/Colors';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
+// Navigation
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/Screen';
 
+// Context
+import { useContext } from 'react';
+import { UserDataContext } from '../contexts/UserDataContext';
 
-function PhoneLoginOTP({ navigation, route }: LoginStackSreenProps) {
+function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackParamList, "PhoneVerify">) {
+  // context var
+  const userData = useContext(UserDataContext);
+  const { setDriverData, setVehicleData } = userData;
+
   const [otp, setOtp] = useState<string>('');
   const textInputRef = createRef<TextInput>();
+  const confirmOTP = useRef<FBAuth.ConfirmationResult>();
 
   function onClickOTP() {
-    console.log('Click OTP');
     textInputRef.current?.blur();
-
     textInputRef.current?.focus();
   }
 
-
+  useEffect(() => {
+    auth().signInWithPhoneNumber(route.params.phone).then(v => confirmOTP.current = v);
+  }, [])
 
   async function signInWithPhoneNumber() {
-    if (route.params?.phone) {
-      console.log('Login', route.params.phone);
-      const confirmation = await auth().signInWithPhoneNumber(route.params.phone);
-      confirmation.confirm(otp);
+    if (confirmOTP) {
+      try {
+        const res = await confirmOTP.current?.confirm(otp);
+        navigation.replace("Main");
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
   async function signOutWithPhoneNumber() {
@@ -38,6 +53,81 @@ function PhoneLoginOTP({ navigation, route }: LoginStackSreenProps) {
     }
   }
 
+  async function getDriverInfo(driverPhone: string, setDriverData: any) {
+    try {
+      const response = await fetch(`http://10.0.2.2:3000/api/drivers/${driverPhone}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        console.error('Server returned an error (getting driver info): ', responseData);
+        return null;
+      }
+
+      const responseData = await response.json();
+      // console.log('Getting driver info successful:', responseData);
+
+      await setDriverData(responseData);
+
+      return responseData;
+    } catch (error) {
+      console.error('Error during getting driver info:', error);
+      return null;
+    }
+  }
+
+  async function getVehicleInfo(driverId: string, setVehicleData: any) {
+    try {
+      const apiUrl = `http://10.0.2.2:3000/api/vehicles/${driverId}`;
+
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        console.error('Server returned an error (getting vehicle info): ', responseData);
+        return null;
+      }
+
+      const responseData = await response.json();
+      // console.log('Getting vehicle info successful:', responseData);
+
+      await setVehicleData(responseData);
+
+      return responseData;
+    } catch (error) {
+      console.error('Error during getting vehicle info:', error);
+      return null;
+    }
+  }
+
+  async function login() {
+    await signInWithPhoneNumber();
+    const driverPhone = route.params.phone;
+    const driverDataReponse = await getDriverInfo(driverPhone, setDriverData);
+    await getVehicleInfo(driverDataReponse.id, setVehicleData);
+
+    // const vehicleDataResponse = await getVehicleInfo(driverDataResponse.id);
+
+    // console.log('Before setting driver data:', setDriverData);
+
+    // console.log('After setting driver data:', setDriverData);
+
+    // console.log('Before setting vehicle data:', setVehicleData);
+    // console.log('After setting vehicle data:', setVehicleData);
+
+    // console.log("Login Driver Id: ", driverDataResponse.id);
+    // console.log("Driver Context Data: ", driverData);
+    // console.log("Vehicle Context Data: ", vehicleData);
+  }
 
   return (<View style={styles.screenContainer}>
     <Text style={styles.titleText}>Enter the 6-digit code sent to {route.params?.phone} by SMS</Text>
@@ -58,21 +148,11 @@ function PhoneLoginOTP({ navigation, route }: LoginStackSreenProps) {
       ref={textInputRef}
       keyboardType="number-pad" />
 
-
-
     <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD"
       style={styles.nextButtonWrapper}
-      onPress={signInWithPhoneNumber} >
+      onPress={login} >
       <View style={styles.nextButton}>
         <Text style={styles.buttonText}> CONFIRM </Text>
-      </View>
-    </TouchableHighlight>
-
-    <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD"
-      style={{ backgroundColor: 'black' }}
-      onPress={signOutWithPhoneNumber} >
-      <View style={styles.nextButton}>
-        <Text style={styles.buttonText}> MAGICAL LOGOUT </Text>
       </View>
     </TouchableHighlight>
 
@@ -81,10 +161,9 @@ function PhoneLoginOTP({ navigation, route }: LoginStackSreenProps) {
       style={styles.resendButton}
       onPress={signOutWithPhoneNumber} >
       <View>
-        <Text style={styles.resendText}> Get new code or send by ABC in 00:28 </Text>
+        <Text style={styles.resendText}> Get new code in 01:28 </Text>
       </View>
     </TouchableHighlight>
-
   </View>);
 }
 
@@ -102,11 +181,6 @@ const styles = StyleSheet.create({
     right: 24,
     borderRadius: 50,
   },
-  // nextButton: {
-  //   padding: 12,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
   nextButton: {
     justifyContent: 'center',
     alignItems: 'center',
