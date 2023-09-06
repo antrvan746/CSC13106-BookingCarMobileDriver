@@ -16,17 +16,32 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/Screen';
 
 // Context
-import { useContext } from 'react';
-import { UserDataContext } from '../contexts/UserDataContext';
+import { useUserData } from '../contexts/UserDataContext';
+import { faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons';
 
 function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackParamList, "PhoneVerify">) {
   // context var
-  const userData = useContext(UserDataContext);
-  const { setDriverData, setVehicleData } = userData;
-
+  const { setDriverData, setVehicleData } = useUserData();
   const [otp, setOtp] = useState<string>('');
   const textInputRef = createRef<TextInput>();
   const confirmOTP = useRef<FBAuth.ConfirmationResult>();
+
+  const [timeLeft, setTimeLeft] = useState(90); // 1 minute and 30 seconds in seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (timeLeft > 0) {
+        setTimeLeft(timeLeft - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
   function onClickOTP() {
     textInputRef.current?.blur();
@@ -53,7 +68,7 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
     }
   }
 
-  async function getDriverInfo(driverPhone: string, setDriverData: any) {
+  async function getDriverInfo(driverPhone: string) {
     try {
       const response = await fetch(`http://10.0.2.2:3000/api/drivers/${driverPhone}`, {
         method: 'GET',
@@ -71,8 +86,6 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
       const responseData = await response.json();
       // console.log('Getting driver info successful:', responseData);
 
-      await setDriverData(responseData);
-
       return responseData;
     } catch (error) {
       console.error('Error during getting driver info:', error);
@@ -80,7 +93,7 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
     }
   }
 
-  async function getVehicleInfo(driverId: string, setVehicleData: any) {
+  async function getVehicleInfo(driverId: string) {
     try {
       const apiUrl = `http://10.0.2.2:3000/api/vehicles/${driverId}`;
 
@@ -100,8 +113,6 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
       const responseData = await response.json();
       // console.log('Getting vehicle info successful:', responseData);
 
-      await setVehicleData(responseData);
-
       return responseData;
     } catch (error) {
       console.error('Error during getting vehicle info:', error);
@@ -112,9 +123,16 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
   async function login() {
     await signInWithPhoneNumber();
     const driverPhone = route.params.phone;
-    const driverDataReponse = await getDriverInfo(driverPhone, setDriverData);
-    await getVehicleInfo(driverDataReponse.id, setVehicleData);
+    const driverDataResponse = await getDriverInfo(driverPhone);
+    if (!driverDataResponse) {
+      return;
+    }
+    const vehicleData = await getVehicleInfo(driverDataResponse.id);
 
+    if (vehicleData) {
+      setDriverData?.(driverDataResponse);
+      setVehicleData?.(vehicleData);
+    }
     // const vehicleDataResponse = await getVehicleInfo(driverDataResponse.id);
 
     // console.log('Before setting driver data:', setDriverData);
@@ -161,7 +179,7 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
       style={styles.resendButton}
       onPress={signOutWithPhoneNumber} >
       <View>
-        <Text style={styles.resendText}> Get new code in 01:28 </Text>
+        <Text style={styles.resendText}> Get new code in {formattedTime} </Text>
       </View>
     </TouchableHighlight>
   </View>);

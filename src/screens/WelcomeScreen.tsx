@@ -24,16 +24,91 @@ import { RootStackParamList } from '../types/Screen';
 type WelcomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 // Context
-import { useUserData } from '../contexts/UserDataContext';
+import { DriverData, VehicleData, useUserData } from '../contexts/UserDataContext';
+
+// Firebase
+import auth from '@react-native-firebase/auth';
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } }) => {
-  const { driverData, vehicleData } = useUserData();
+  const { setDriverData, setVehicleData } = useUserData();
 
   useEffect(() => {
-    if (driverData || vehicleData) {
-      navigate('Main');
+    const user = auth().currentUser;
+    console.log(user);
+    if (user && user.phoneNumber) {
+
+      getData(user.phoneNumber)
+        .then(() => {
+          navigate("Main");
+        })
     }
-  }, [driverData, vehicleData, navigate]);
+  }, [])
+
+
+  async function getData(phone: string) {
+    const driverData = await getDriverInfo(phone);
+    if (!driverData) {
+      return;
+    }
+    const vehicleData = await getVehicleInfo(driverData.id)
+    if (!vehicleData) {
+      return;
+    }
+    setDriverData(driverData);
+    setVehicleData(vehicleData);
+  }
+
+  async function getDriverInfo(driverPhone: string) {
+    try {
+      const response = await fetch(`http://10.0.2.2:3000/api/drivers/${driverPhone}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        console.error('Server returned an error (getting driver info): ', responseData);
+        return null;
+      }
+
+      const responseData = await response.json();
+      // console.log('Getting driver info successful:', responseData);
+
+      return responseData as DriverData;
+    } catch (error) {
+      console.error('Error during getting driver info:', error);
+      return null;
+    }
+  }
+
+  async function getVehicleInfo(driverId: string) {
+    try {
+      const apiUrl = `http://10.0.2.2:3000/api/vehicles/${driverId}`;
+
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        console.error('Server returned an error (getting vehicle info): ', responseData);
+        return null;
+      }
+
+      const responseData = await response.json();
+      // console.log('Getting vehicle info successful:', responseData);
+
+      return responseData as VehicleData;
+    } catch (error) {
+      console.error('Error during getting vehicle info:', error);
+      return null;
+    }
+  }
 
   return (
     <SafeAreaView>
@@ -60,7 +135,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
             onPress={() => navigate('Login', {})}
             style={styles.loginButton}>
             <Text style={styles.loginButtonText}>
-              Login
+              Sign in
             </Text>
           </TouchableOpacity>
 
@@ -68,7 +143,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
             onPress={() => navigate('Register')}
             style={styles.registerButton} >
             <Text style={styles.registerButtonText} >
-              Register
+              Sign up
             </Text>
           </TouchableOpacity>
         </View>

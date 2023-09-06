@@ -1,21 +1,19 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 // Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 // Screens
-// import LoginScreen from './src/screens/LoginScreen.old';
-// import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
 import DrivingScreen from './src/screens/DrivingScreen';
 import PaymentScreen from './src/screens/PaymentScreen';
 import PaymentCongratsScreen from './src/screens/PaymentCongratsScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
-import OtpScreen from './src/screens/OtpScreen';
 import LoginScreen from './src/screens/LoginSelectScreen';
 
 // Redux

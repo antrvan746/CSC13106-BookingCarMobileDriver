@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator, } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 // Constants
 import Spacing from "../constants/Spacing";
@@ -31,6 +31,15 @@ function ProfileScreen({ navigation, route }: ProfileScreenProps) {
     );
   }
 
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged((user) => {
+      if (!user) {
+        navigation.navigate("Welcome");
+      }
+    });
+    return subscriber;
+  }, []);
+
   function backToMain() {
     navigation.navigate("Main");
   }
@@ -38,7 +47,6 @@ function ProfileScreen({ navigation, route }: ProfileScreenProps) {
   function signOut() {
     clearUserData();
     auth().signOut();
-    navigation.replace("Welcome");
   }
 
   return (

@@ -1,10 +1,26 @@
 import React, { createContext, useContext, useState } from 'react';
 
+export type DriverData = {
+  id: string,
+  name: string,
+  phone: string,
+  email?: string
+}
+
+export type VehicleData = {
+  id: string,
+  driver_id: string,
+  model: string,
+  plate_number: string,
+  color: string,
+  type: string,
+}
+
 type UserData = {
-  driverData: any;
-  vehicleData: any;
-  setDriverData: React.Dispatch<any>;
-  setVehicleData: React.Dispatch<any>;
+  driverData: DriverData | null;
+  vehicleData: VehicleData | null;
+  setDriverData: React.Dispatch<DriverData>;
+  setVehicleData: React.Dispatch<VehicleData>;
 };
 
 type UserDataContextType = UserData & {
@@ -26,8 +42,9 @@ interface UserDataProviderProps {
 }
 
 export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) => {
-  const [driverData, setDriverData] = useState<any>(null);
-  const [vehicleData, setVehicleData] = useState<any>(null);
+  const [driverData, setDriverData] = useState<DriverData | null>(null);
+  const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
+
 
   const clearUserData = () => {
     setDriverData(null);
