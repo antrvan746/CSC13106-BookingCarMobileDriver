@@ -37,10 +37,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
     console.log(user);
     if (user && user.phoneNumber) {
 
-      getData(user.phoneNumber)
-        .then(() => {
+      getData(user.phoneNumber).then((success) => {
+        if (success) {
           navigate("Main");
-        })
+        }
+      });
     }
   }, [])
 
@@ -48,14 +49,17 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation: { navigate } 
   async function getData(phone: string) {
     const driverData = await getDriverInfo(phone);
     if (!driverData) {
-      return;
+      return false;
     }
     const vehicleData = await getVehicleInfo(driverData.id)
     if (!vehicleData) {
-      return;
+      return false;
     }
+
     setDriverData(driverData);
     setVehicleData(vehicleData);
+
+    return true;
   }
 
   async function getDriverInfo(driverPhone: string) {

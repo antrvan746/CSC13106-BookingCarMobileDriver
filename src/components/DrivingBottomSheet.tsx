@@ -6,7 +6,6 @@ import { Animated, Button, PanResponder, Platform, StyleSheet, Text, View } from
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 // Navigations
-import { RootStackParamList } from '../../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Redux
@@ -20,6 +19,7 @@ import TripHandleButtons from './TripHandleButtons';
 import TripInfor from './TripInfor';
 import BottomBox from './Animations/BottomBox';
 import GlobalServices from '../services/GlobalServices';
+import { RootStackParamList } from '../types/Screen';
 
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
@@ -43,6 +43,7 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
       dispatch(setDrivingScreenState({ state: 'Arrived' }));
     } else if (drivingScreenState.state === 'Arrived') {
       buttonText = 'Đã trả';
+      GlobalServices.RideWs.SendMessage("DriverStratTrip");
       dispatch(setDrivingScreenState({ state: 'Carrying' }));
     } else if (drivingScreenState.state === 'Carrying') {
       buttonText = 'Đã đến';

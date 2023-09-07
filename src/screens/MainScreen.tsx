@@ -33,11 +33,6 @@ import { UserDataContext, useUserData } from '../contexts/UserDataContext';
 import { RootStackParamList } from '../types/Screen';
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
-  const userData = useContext(UserDataContext);
-  const { driverData, vehicleData } = useUserData();
-
-
-
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
@@ -47,6 +42,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     longitude: number;
   } | null>(null);
   const [isInBottomSheet, setInBottomSheet] = useState(false);
+  const { driverData, vehicleData } = useUserData();
 
   const handleStatusButtonPress = () => {
     console.log(mainScreenState.state === "Unavailable", currentLocation)
@@ -134,7 +130,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 
   function sendUpdateCoord(latitude: number, longitude: number) {
     const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
-    fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+    fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
       method: "POST",
       headers: {
         'Accept': '*',

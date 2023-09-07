@@ -26,6 +26,7 @@ import { current } from '@reduxjs/toolkit';
 // Service
 import { DriverInfo } from '../services/RideWs';
 import GlobalServices from '../services/GlobalServices';
+import { useUserData } from '../contexts/UserDataContext';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
@@ -34,8 +35,11 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
   const [isInBottomSheet, setInBottomSheet] = useState(false);
   const [mapLayoutReady, setMapLayoutReady] = useState(false);
   const [routeTrigger, routing] = useLazyGetRouteQuery();
-  const [toPickRoute, setToPickRoute] = useState<{ latitude: number, longitude: number }[]>();
-  const [toDropRoute, setToDropRoute] = useState<{ latitude: number, longitude: number }[]>();
+  const [toPickRoute, setToPickRoute] = useState<{ latitude: number, longitude: number }[]>([]);
+  const [toDropRoute, setToDropRoute] = useState<{ latitude: number, longitude: number }[]>([]);
+
+  const { driverData, vehicleData } = useUserData();
+
 
   const [currentLocation, setCurrentLocation] = useState<{
     latitude: number;
@@ -48,7 +52,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
         const { latitude, longitude } = position.coords;
         setCurrentLocation({ latitude, longitude });
         console.log(position);
-        fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
           method: "POST",
           headers: {
             'Accept': '*',
@@ -82,7 +86,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
       console.log(`Pick up data lat:${d.slat}, lon:${d.slon}, adr:${d.sadr})`);
       console.log(`Drop off data lat:${d.elat}, lon:${d.elon}, adr:${d.eadr})`);
     }
-    GlobalServices.RideWs.Connect(route.params.trip_data.trip_id);
+    GlobalServices.RideWs.Connect(route.params.trip_data.trip_id, driverData?.id || "test_driver");
   }, []);
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
@@ -92,7 +96,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
       const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
       if (!currentLocation?.latitude || !currentLocation.longitude) {
         setCurrentLocation({ latitude, longitude });
-        fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
           method: "POST",
           headers: {
             'Accept': '*',
@@ -112,11 +116,11 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
         currentLocation.latitude, currentLocation.longitude) >= 100) {
         setCurrentLocation({ latitude, longitude });
         console.log("Geohash: ", geoHash);
-        fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
+        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
           method: "POST",
           body: JSON.stringify({
-            lon: currentLocation.longitude,
-            lat: currentLocation.latitude,
+            lon: longitude,
+            lat: latitude,
             g: "w3gv"
           })
         }).then(c => console.log("Update driver loc: ", c.status));
