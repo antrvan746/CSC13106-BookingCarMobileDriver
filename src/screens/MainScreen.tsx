@@ -28,8 +28,7 @@ import { selectDrivingScreenState, setDrivingScreenState } from '../redux/Drivin
 import GlobalServices from '../services/GlobalServices';
 
 // Context
-import { useContext } from 'react';
-import { UserDataContext, useUserData } from '../contexts/UserDataContext';
+import { useUserData } from '../contexts/UserDataContext';
 import { RootStackParamList } from '../types/Screen';
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
@@ -42,7 +41,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     longitude: number;
   } | null>(null);
   const [isInBottomSheet, setInBottomSheet] = useState(false);
-  const { driverData, vehicleData } = useUserData();
+  const { driverData, setTripData } = useUserData();
 
   const handleStatusButtonPress = () => {
     console.log(mainScreenState.state === "Unavailable", currentLocation)
@@ -103,6 +102,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
             text: "Accept",
             onPress: () => {
               GlobalServices.DriverPoll.Close();
+              setTripData(req);
               dispatch(setMainScreenState({ state: "Unavailable" }));
               navigation.replace("Driving", { trip_data: req })
             }

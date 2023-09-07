@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { RideReq } from '../services/DriverWaitXHR';
 
 export type DriverData = {
   id: string,
@@ -17,10 +18,12 @@ export type VehicleData = {
 }
 
 type UserData = {
+  tripData: RideReq | null
   driverData: DriverData | null;
   vehicleData: VehicleData | null;
   setDriverData: React.Dispatch<DriverData>;
   setVehicleData: React.Dispatch<VehicleData>;
+  setTripData: React.Dispatch<RideReq>;
 };
 
 type UserDataContextType = UserData & {
@@ -44,7 +47,7 @@ interface UserDataProviderProps {
 export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) => {
   const [driverData, setDriverData] = useState<DriverData | null>(null);
   const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
-
+  const [tripData, setTripData] = useState<RideReq | null>(null);
 
   const clearUserData = () => {
     setDriverData(null);
@@ -53,9 +56,11 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) 
 
   const userDataContextValue: UserDataContextType = {
     driverData,
-    setDriverData,
     vehicleData,
+    tripData,
+    setDriverData,
     setVehicleData,
+    setTripData,
     clearUserData,
   };
 

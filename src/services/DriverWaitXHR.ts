@@ -10,6 +10,10 @@ export interface RideReq {
   "user_id": string
   "driver_id": string
   "trip_id": string
+
+  "price": number,
+  "user_name": string,
+  "user_phone": string
 }
 
 interface Listeners {
