@@ -20,7 +20,6 @@ import { RootStackParamList } from '../types/Screen';
 
 // Context
 import { useUserData } from '../contexts/UserDataContext';
-import { faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons';
 
 function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackParamList, "PhoneVerify">) {
   // context var
@@ -29,7 +28,7 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
   const textInputRef = createRef<TextInput>();
   const confirmOTP = useRef<FBAuth.ConfirmationResult>();
 
-  const [timeLeft, setTimeLeft] = useState(90); // 1 minute and 30 seconds in seconds
+  const [timeLeft, setTimeLeft] = useState(90);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -70,8 +69,6 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
       const confirmation = await auth().signOut();
     }
   }
-
-
 
   async function login() {
     await signInWithPhoneNumber();

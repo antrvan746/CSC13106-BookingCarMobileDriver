@@ -26,11 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingLeft: 10,
-    // backgroundColor: '#F9F9F9',
-    // borderRadius: 10,
-    // height: 58,
-    // elevation: 8,
-    // shadowColor: 'black',
   },
   statusText: {
     paddingLeft: 10,

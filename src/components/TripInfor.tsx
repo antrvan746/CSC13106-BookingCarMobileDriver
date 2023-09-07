@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Text, View, StyleSheet } from 'react-native';
-import React, { Component } from 'react';
+import React from 'react';
 import { useUserData } from '../contexts/UserDataContext';
 
 function TripInfor(): JSX.Element {
@@ -8,7 +8,6 @@ function TripInfor(): JSX.Element {
 
 
   function formatPrice(price: number) {
-
     // Format the price with decimal places and add "đ" at the end
     const formattedPrice = price.toLocaleString("vi-VN", {
       style: "currency",
@@ -25,7 +24,6 @@ function TripInfor(): JSX.Element {
         <Text style={styles.riderName}>{tripData?.user_name}</Text>
       </View>
       <View style={styles.location}>
-        {/* <Text style={styles.destination}>Nhà hàng Hàn Quốc Hana</Text> */}
         <Text style={styles.address}>
           {tripData?.eadr}
         </Text>

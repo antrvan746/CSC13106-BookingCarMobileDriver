@@ -1,12 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Text, View, StyleSheet, TextInput } from 'react-native';
-import React, { Component } from 'react';
-
-// Redux
-import { useAppDispatch, useAppSelector } from '../redux/hook';
-import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
-
+import React from 'react';
 
 interface PaymentPriceProps {
   state: string;
@@ -92,7 +87,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   inputFee: {
-    // backgroundColor: '#48505F',
     textAlign: 'right',
     fontSize: 16,
     width: 170,

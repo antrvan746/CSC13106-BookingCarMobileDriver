@@ -26,7 +26,7 @@ function PhoneLogin({ navigation, route }: LoginStackSreenProps) {
   function onFormatedPhoneChange(phone: string) {
     formatedPhone.current = phone;
     //Exception testing number
-    if (phone.length === '+84799192229'.length) {
+    if (phone.length === '+84123321123'.length) {
       setValidNumber(true);
     }
   }

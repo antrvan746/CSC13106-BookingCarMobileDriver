@@ -150,7 +150,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
   };
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
-    // Update the currentLocation state with the new user location
+    // Update currentLocation to Go server
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
       if (!currentLocation?.latitude || !currentLocation.longitude) {
@@ -166,15 +166,12 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         if (mainScreenState.state === "Available") {
           sendUpdateCoord(latitude, longitude);
         }
-
       }
-      // console.log('Moving:', latitude, longitude);
     }
   };
 
   return (
     <View style={styles.containerWrapper}>
-      {/* <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight> */}
 
       {!currentLocation ? null :
         <MapView

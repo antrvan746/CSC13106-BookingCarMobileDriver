@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
 import PaymentMethod from './PaymentMethod';
 
 export class PaymentRiderInfor extends Component {
@@ -8,6 +8,7 @@ export class PaymentRiderInfor extends Component {
     return (
       <View>
         <View style={styles.wrapper}>
+          // TODO: MAP rider data
           <Text style={styles.riderName}>Nguyễn Ngọc Anh Thư</Text>
           <PaymentMethod />
         </View>

@@ -85,7 +85,6 @@ function LoginSelectScreen({ navigation, route }: LoginStackSreenProps) {
   function selectLoginWithPhone() {
     navigation.navigate('Phone');
   }
-  const loginState = useAppSelector(selectLoginState);
 
   function logout() {
     auth().signOut();

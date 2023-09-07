@@ -2,20 +2,18 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { useRef } from 'react';
-import { Animated, Button, PanResponder, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 // Navigation
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../types/Screen';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
-import Layer from './Layer';
-import StatusButton from './StatusButton';
 import CustomStatusBar from './CustomStatusBar';
 import NavigationBar from './NavigationBar';
 import BottomBox from './Animations/BottomBox';
@@ -27,31 +25,11 @@ interface MainScreenProps extends NativeStackScreenProps<RootStackParamList, 'Ma
 
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.32;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.12;
-const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
-const MAX_DOWNWARD_TRANSLATE_Y = 0;
-const DRAG_THRESHOLD = 50;
-
-
 
 function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
   const mainScreenState = useAppSelector(selectMainScreenState);
-  const drivingScreenState = useAppSelector(selectDrivingScreenState);
-
-  const dispatch = useAppDispatch();
-
   const handleStatusButtonPress = () => {
     onStatusBtnPress();
-  };
-
-  const handleStateChange = () => {
-  };
-
-  const goToLoginScreen = () => {
-    navigation.replace('Login');
-  };
-
-  const goToWelcomeScreen = () => {
-    navigation.replace('Welcome');
   };
 
   let buttonText = mainScreenState.state === 'Available' ? 'Tắt kết nối' : 'Bật kết nối';
@@ -75,22 +53,16 @@ function BottomSheet2({ navigation, onStatusBtnPress }: MainScreenProps) {
           </TouchableOpacity>
         </View>
       </View>
-      {/* TODO: fix UI bug */}
-      {/* <Layer /> */}
     </View>
 
     <View style={styles.statusBarWrapper}>
       <CustomStatusBar status={mainScreenState.state === 'Available' ? 'online' : 'offline'} />
-      {/* <Button title="Change state" onPress={handleStateChange} />
-          <Button title="Login Screen" onPress={goToLoginScreen} />
-          <Button title="Welcome Screen" onPress={goToWelcomeScreen} /> */}
       <View style={styles.seperateLine} />
       <NavigationBar />
     </View>
   </>
   );
 };
-
 
 const styles = StyleSheet.create({
   statusButton: {

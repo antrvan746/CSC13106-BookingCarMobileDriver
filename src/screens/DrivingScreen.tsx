@@ -24,8 +24,6 @@ import { RootStackParamList } from '../types/Screen';
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 
-import { current } from '@reduxjs/toolkit';
-
 // Service
 import { DriverInfo } from '../services/RideWs';
 import GlobalServices from '../services/GlobalServices';
@@ -96,7 +94,6 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
         console.log("Geohash: ", geoHash);
         updateDriverLocation(driverData?.id, latitude, longitude);
       }
-      // console.log('Moving:', latitude, longitude);
     }
   };
 
@@ -119,12 +116,6 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
     if (data) {
       callback(data.routes[0].geometry);
     }
-  }
-
-  const mockData = {
-    name: "Testing client",
-    destination: "56/2 Dien Bien Phu, Phuong 26, Quan Binh Thanh",
-    price: "125000",
   }
 
   return (

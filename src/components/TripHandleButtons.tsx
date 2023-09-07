@@ -43,7 +43,6 @@ const TripHandleButtons = ({ buttonText, handleTripState, handleOffState }) => {
   );
 }
 
-
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',

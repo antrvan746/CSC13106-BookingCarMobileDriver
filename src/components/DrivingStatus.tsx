@@ -1,13 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { Text, View, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native';
-import React, { Component } from 'react';
+import React from 'react';
 
 const DrivingStatus = () => {
   function onPress() {
-    const startLatitude = 10.78825445546148; // Replace with your start latitude
-    const startLongitude = 106.69380051915194; // Replace with your start longitude
-    const endLatitude = 10.775111871794604; // Replace with your end latitude
-    const endLongitude = 106.69234499244654; // Replace with your end longitude
+    // TODO: Map location data
+    // Replace with your location data
+    const startLatitude = 10.78825445546148;
+    const startLongitude = 106.69380051915194;
+    const endLatitude = 10.775111871794604;
+    const endLongitude = 106.69234499244654;
 
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLatitude},${startLongitude}&destination=${endLatitude},${endLongitude}&travelmode=driving`;
 
@@ -34,7 +36,7 @@ const DrivingStatus = () => {
         <Text>Chỉ đường</Text>
         <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
           <Image
-            source={require('../assets/icons/navigator-64.png')} // Replace with the actual path to your image
+            source={require('../assets/icons/navigator-64.png')}
             style={styles.buttonImage}
           />
         </TouchableOpacity>
