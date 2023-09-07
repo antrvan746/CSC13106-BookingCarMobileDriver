@@ -6,6 +6,9 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, PermissionsAndroid, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { PERMISSIONS, request } from 'react-native-permissions';
 
+/// API
+import { updateDriverLocation } from '../api/api';
+
 // Map & Location
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -130,18 +133,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 
   function sendUpdateCoord(latitude: number, longitude: number) {
     const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
-    fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
-      method: "POST",
-      headers: {
-        'Accept': '*',
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        lon: longitude,
-        lat: latitude,
-        g: "w3gv"
-      })
-    }).then(c => console.log("Update driver loc: ", c.status));
+    updateDriverLocation(driverData?.id, latitude, longitude);
   }
 
   function getCurrentLocation() {

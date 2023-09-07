@@ -4,6 +4,9 @@
 import { View, StyleSheet, Text, Animated, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 
+// API
+import { updateDriverLocation } from '../api/api';
+
 // Components
 import DrivingBottomSheet from '../components/DrivingBottomSheet';
 
@@ -37,10 +40,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
   const [routeTrigger, routing] = useLazyGetRouteQuery();
   const [toPickRoute, setToPickRoute] = useState<{ latitude: number, longitude: number }[]>([]);
   const [toDropRoute, setToDropRoute] = useState<{ latitude: number, longitude: number }[]>([]);
-
   const { driverData, vehicleData } = useUserData();
-
-
   const [currentLocation, setCurrentLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -52,18 +52,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
         const { latitude, longitude } = position.coords;
         setCurrentLocation({ latitude, longitude });
         console.log(position);
-        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
-          method: "POST",
-          headers: {
-            'Accept': '*',
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            lon: longitude,
-            lat: latitude,
-            g: "w3gv"
-          })
-        });
+        updateDriverLocation(driverData?.id, latitude, longitude);
 
         GetRouting(latitude, longitude, route.params.trip_data.slat, route.params.trip_data.slon,
           (p) => { setToPickRoute(DecodePolyline(p)) }
@@ -96,18 +85,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
       const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
       if (!currentLocation?.latitude || !currentLocation.longitude) {
         setCurrentLocation({ latitude, longitude });
-        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
-          method: "POST",
-          headers: {
-            'Accept': '*',
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            lon: longitude,
-            lat: latitude,
-            g: "w3gv"
-          })
-        }).then(c => console.log("Update driver loc: ", c.status));
+        updateDriverLocation(driverData?.id, latitude, longitude);
         return
       }
 
@@ -116,14 +94,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
         currentLocation.latitude, currentLocation.longitude) >= 100) {
         setCurrentLocation({ latitude, longitude });
         console.log("Geohash: ", geoHash);
-        fetch(`http://10.0.2.2:3080/loc/driver/${driverData?.id || "test_driver"}`, {
-          method: "POST",
-          body: JSON.stringify({
-            lon: longitude,
-            lat: latitude,
-            g: "w3gv"
-          })
-        }).then(c => console.log("Update driver loc: ", c.status));
+        updateDriverLocation(driverData?.id, latitude, longitude);
       }
       // console.log('Moving:', latitude, longitude);
     }

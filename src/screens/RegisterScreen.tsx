@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import PhoneInput from "react-native-phone-number-input";
 import { SelectList } from 'react-native-dropdown-select-list'
 
+// API
+import { createDriver, createVehicle } from "../api/api";
+
 // Contants
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontSize";
@@ -30,94 +33,12 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
     { key: '4-seats', value: 'Car 4 seats' },
     { key: '7-seats', value: 'Car 7 seats' },
   ]
-  const driverInfor = {
-    name: name,
-    phone: phoneNumber,
-    email: email,
-    password: "",
-    rating: 5.0,
-  }
-
-  async function sendDriverInforToServer() {
-    try {
-      const response = await fetch('http://10.0.2.2:3000/api/drivers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          phone: phoneNumber,
-          email,
-          password: "",
-        }),
-      });
-
-      if (!response.ok) {
-        const responseData = await response.json();
-        console.error('Server returned an error (registering driver): ', responseData);
-        return null;
-      }
-
-      const responseData = await response.json();
-      // console.log('Registration driver successful:', responseData);
-      return responseData;
-
-    } catch (error) {
-      console.error('Error during registration:', error);
-      return null;
-    }
-  }
-
-  async function getDriverInfor(phoneNumber: string | null) {
-    const apiUrl = `http://10.0.2.2:3000/api/drivers/${phoneNumber}`;
-
-    return fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP Error: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((driverInfo) => driverInfo)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  async function registerVehicle(driver_id: string) {
-    try {
-      const response = await fetch('http://10.0.2.2:3000/api/vehicles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          driver_id: driver_id,
-          plate_number: plateNumber,
-          model: model,
-          color: color,
-          type: vehicleSelected,
-        }),
-      });
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        console.error('Server returned an error (create vehicle):', responseData);
-      } else {
-        // console.log('Registration vehicle successful:', responseData);
-      }
-    } catch (error) {
-      console.error('Error during create vehicle', error);
-    }
-  }
 
   async function register() {
     try {
-      const driverData = await sendDriverInforToServer();
-      // console.log("Driver data: ", driverData)
+      const driverData = await createDriver(name, phoneNumber, email);
       if (driverData?.id) {
-        await registerVehicle(driverData.id);
+        await createVehicle(driverData.id, plateNumber, model, color, vehicleSelected);
         navigation.navigate("Login", {
           screen: "PhoneVerify",
           params: {
@@ -125,7 +46,6 @@ function RegisterScreen({ navigation, route }: StackScreenProps) {
           }
         });
       }
-      //await getDriverInfor(driverInfor.phone);
     } catch (error) {
       console.error("Error during registration:", JSON.stringify(error));
     }
