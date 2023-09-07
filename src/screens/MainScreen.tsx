@@ -6,6 +6,9 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, PermissionsAndroid, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { PERMISSIONS, request } from 'react-native-permissions';
 
+/// API
+import { updateDriverLocation } from '../api/api';
+
 // Map & Location
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -28,16 +31,10 @@ import { selectDrivingScreenState, setDrivingScreenState } from '../redux/Drivin
 import GlobalServices from '../services/GlobalServices';
 
 // Context
-import { useContext } from 'react';
-import { UserDataContext, useUserData } from '../contexts/UserDataContext';
+import { useUserData } from '../contexts/UserDataContext';
 import { RootStackParamList } from '../types/Screen';
 
 const MainScreen = ({ navigation, route }: MainScreenProps) => {
-  const userData = useContext(UserDataContext);
-  const { driverData, vehicleData } = useUserData();
-
-
-
   const mainScreenState = useAppSelector(selectMainScreenState);
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
 
@@ -47,6 +44,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
     longitude: number;
   } | null>(null);
   const [isInBottomSheet, setInBottomSheet] = useState(false);
+  const { driverData, setTripData } = useUserData();
 
   const handleStatusButtonPress = () => {
     console.log(mainScreenState.state === "Unavailable", currentLocation)
@@ -107,6 +105,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
             text: "Accept",
             onPress: () => {
               GlobalServices.DriverPoll.Close();
+              setTripData(req);
               dispatch(setMainScreenState({ state: "Unavailable" }));
               navigation.replace("Driving", { trip_data: req })
             }
@@ -134,18 +133,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
 
   function sendUpdateCoord(latitude: number, longitude: number) {
     const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
-    fetch("http://10.0.2.2:3080/loc/driver/test_driver", {
-      method: "POST",
-      headers: {
-        'Accept': '*',
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        lon: longitude,
-        lat: latitude,
-        g: "w3gv"
-      })
-    }).then(c => console.log("Update driver loc: ", c.status));
+    updateDriverLocation(driverData?.id, latitude, longitude);
   }
 
   function getCurrentLocation() {
@@ -162,7 +150,7 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
   };
 
   const handleUserLocationChange = (event: UserLocationChangeEvent) => {
-    // Update the currentLocation state with the new user location
+    // Update currentLocation to Go server
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
       if (!currentLocation?.latitude || !currentLocation.longitude) {
@@ -178,15 +166,12 @@ const MainScreen = ({ navigation, route }: MainScreenProps) => {
         if (mainScreenState.state === "Available") {
           sendUpdateCoord(latitude, longitude);
         }
-
       }
-      // console.log('Moving:', latitude, longitude);
     }
   };
 
   return (
     <View style={styles.containerWrapper}>
-      {/* <TouchableHighlight onPress={goToWelcomeScreen}><Text>Welcome</Text></TouchableHighlight> */}
 
       {!currentLocation ? null :
         <MapView

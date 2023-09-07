@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NavLoginNames, LoginStackParam } from "./Login"
+import { RideReq } from '../services/DriverWaitXHR';
+
 // Screen name: take appropriate decision to use navigate to navigate between screens or only change component content
 export type NavScreenNames = 'Register' | 'Login' | 'Main' | 'Profile' | 'Driving' | 'Payment' | 'CongratsPayment' | NavLoginNames;
 interface StackScreenProps

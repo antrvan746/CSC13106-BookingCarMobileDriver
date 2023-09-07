@@ -1,25 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { Text, View, StyleSheet } from 'react-native';
-import React, { Component } from 'react';
+import React from 'react';
+import { useUserData } from '../contexts/UserDataContext';
 
 function TripInfor(): JSX.Element {
-  const tripData = {
-    name: "Testing client",
-    destination: "56/2 Dien Bien Phu, Phuong 26, Quan Binh Thanh",
-    price: "125000",
-  }
+  const { tripData } = useUserData();
 
-  function formatPrice(price: string) {
-    // Convert the price to a number
-    const numericPrice = parseFloat(price);
 
-    // Check if the price is a valid number
-    if (isNaN(numericPrice)) {
-      return "Invalid Price";
-    }
-
+  function formatPrice(price: number) {
     // Format the price with decimal places and add "đ" at the end
-    const formattedPrice = numericPrice.toLocaleString("vi-VN", {
+    const formattedPrice = price.toLocaleString("vi-VN", {
       style: "currency",
       currency: "VND",
     });
@@ -27,21 +17,19 @@ function TripInfor(): JSX.Element {
     return formattedPrice;
   }
 
-  const price = formatPrice(tripData.price)
 
   return (
     <View style={styles.tripInforWrapper}>
       <View>
-        <Text style={styles.riderName}>{tripData.name}</Text>
+        <Text style={styles.riderName}>{tripData?.user_name}</Text>
       </View>
       <View style={styles.location}>
-        {/* <Text style={styles.destination}>Nhà hàng Hàn Quốc Hana</Text> */}
         <Text style={styles.address}>
-          {tripData.destination}
+          {tripData?.eadr}
         </Text>
       </View>
       <View>
-        <Text style={styles.price}>{price}</Text>
+        <Text style={styles.price}>{formatPrice((tripData?.price || 0) * 1000)}</Text>
       </View>
     </View>
   );

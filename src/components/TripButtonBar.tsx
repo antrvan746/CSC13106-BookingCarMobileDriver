@@ -66,8 +66,6 @@ const styles = StyleSheet.create({
   tripButtonsWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // backgroundColor: '#F9F9F9',
-    // alignItems: 'center',
     height: 90,
     paddingHorizontal: 20,
     paddingVertical: 11,

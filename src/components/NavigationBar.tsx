@@ -89,12 +89,7 @@ const styles = StyleSheet.create({
   navigationView: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    // backgroundColor: '#F9F9F9',
-    // borderRadius: 10,
-    // height: 84,
     paddingHorizontal: 10,
-    // elevation: 8,
-    // shadowColor: 'black',
   },
   services: {
     alignItems: 'center',

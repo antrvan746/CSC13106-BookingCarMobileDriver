@@ -2,40 +2,42 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React, { useRef } from 'react';
-import { Animated, Button, PanResponder, Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../constants/Dimenstions';
 
 // Navigations
-import { RootStackParamList } from '../../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/Screen';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { selectMainScreenState, setMainScreenState } from '../redux/MainScreen';
 import { selectDrivingScreenState, setDrivingScreenState } from '../redux/DrivingScreen';
 import { selectPaymentScreenState, setPaymentScreenState } from '../redux/PaymentScreen';
+
+// Animations
+import BottomBox from './Animations/BottomBox';
+
+// Services
+import GlobalServices from '../services/GlobalServices';
+
+
+// Components
 import DrivingStatus from './DrivingStatus';
 import TripButtonBar from './TripButtonBar';
 import TripHandleButtons from './TripHandleButtons';
 import TripInfor from './TripInfor';
-import BottomBox from './Animations/BottomBox';
-import GlobalServices from '../services/GlobalServices';
-
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Driving'> { }
 
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.44;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.16;
-const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
-const MAX_DOWNWARD_TRANSLATE_Y = 0;
-const DRAG_THRESHOLD = 50;
 
 
 function BottomSheet2({ navigation, route }: Props): JSX.Element {
   const dispatch = useAppDispatch();
   const drivingScreenState = useAppSelector(selectDrivingScreenState);
   let buttonText = 'Đã đến';
-  //console.log(drivingScreenState.state);
   const handleTripStateButtonPress = () => {
     if (drivingScreenState.state === 'Arriving') {
       buttonText = 'Đã đón';
@@ -43,6 +45,7 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
       dispatch(setDrivingScreenState({ state: 'Arrived' }));
     } else if (drivingScreenState.state === 'Arrived') {
       buttonText = 'Đã trả';
+      GlobalServices.RideWs.SendMessage("DriverStratTrip");
       dispatch(setDrivingScreenState({ state: 'Carrying' }));
     } else if (drivingScreenState.state === 'Carrying') {
       buttonText = 'Đã đến';
@@ -53,9 +56,6 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
       dispatch(setPaymentScreenState({ state: 'InProgress' }));
       navigation.navigate('Payment', { paymentId: '1238721267' });
     }
-    // else if (drivingScreenState.state === 'Finished') {
-    //   dispatch(setDrivingScreenState({ state: 'Arriving' }));
-    // }
   };
 
   const handleOffButtonPress = () => {

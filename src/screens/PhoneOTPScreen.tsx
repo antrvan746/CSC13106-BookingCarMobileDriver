@@ -4,6 +4,9 @@
 import React, { useState, useRef, createRef, useEffect } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
 
+// API
+import { getDriverInfo, getVehicleInfo } from '../api/api';
+
 // Firebase
 import auth, { FirebaseAuthTypes as FBAuth } from '@react-native-firebase/auth';
 
@@ -17,7 +20,6 @@ import { RootStackParamList } from '../types/Screen';
 
 // Context
 import { useUserData } from '../contexts/UserDataContext';
-import { faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons';
 
 function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackParamList, "PhoneVerify">) {
   // context var
@@ -26,7 +28,7 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
   const textInputRef = createRef<TextInput>();
   const confirmOTP = useRef<FBAuth.ConfirmationResult>();
 
-  const [timeLeft, setTimeLeft] = useState(90); // 1 minute and 30 seconds in seconds
+  const [timeLeft, setTimeLeft] = useState(90);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -68,58 +70,6 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
     }
   }
 
-  async function getDriverInfo(driverPhone: string) {
-    try {
-      const response = await fetch(`http://10.0.2.2:3000/api/drivers/${driverPhone}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const responseData = await response.json();
-        console.error('Server returned an error (getting driver info): ', responseData);
-        return null;
-      }
-
-      const responseData = await response.json();
-      // console.log('Getting driver info successful:', responseData);
-
-      return responseData;
-    } catch (error) {
-      console.error('Error during getting driver info:', error);
-      return null;
-    }
-  }
-
-  async function getVehicleInfo(driverId: string) {
-    try {
-      const apiUrl = `http://10.0.2.2:3000/api/vehicles/${driverId}`;
-
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const responseData = await response.json();
-        console.error('Server returned an error (getting vehicle info): ', responseData);
-        return null;
-      }
-
-      const responseData = await response.json();
-      // console.log('Getting vehicle info successful:', responseData);
-
-      return responseData;
-    } catch (error) {
-      console.error('Error during getting vehicle info:', error);
-      return null;
-    }
-  }
-
   async function login() {
     await signInWithPhoneNumber();
     const driverPhone = route.params.phone;
@@ -133,18 +83,6 @@ function PhoneLoginOTP({ navigation, route }: NativeStackScreenProps<RootStackPa
       setDriverData?.(driverDataResponse);
       setVehicleData?.(vehicleData);
     }
-    // const vehicleDataResponse = await getVehicleInfo(driverDataResponse.id);
-
-    // console.log('Before setting driver data:', setDriverData);
-
-    // console.log('After setting driver data:', setDriverData);
-
-    // console.log('Before setting vehicle data:', setVehicleData);
-    // console.log('After setting vehicle data:', setVehicleData);
-
-    // console.log("Login Driver Id: ", driverDataResponse.id);
-    // console.log("Driver Context Data: ", driverData);
-    // console.log("Vehicle Context Data: ", vehicleData);
   }
 
   return (<View style={styles.screenContainer}>

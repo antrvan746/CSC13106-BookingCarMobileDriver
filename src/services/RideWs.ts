@@ -38,6 +38,7 @@ class RideWs {
     Message: "MSG߷",
     DriverArrivePick: "DAP߷",
     DriverArriveDrop: "DAD߷",
+    DriverStratTrip: "DST߷"
   }
   public client_listeners: RideWsConstrucProps
 
@@ -50,14 +51,15 @@ class RideWs {
     this._onWsMessage = this._onWsMessage.bind(this);
   }
 
-  public Connect(trip_id: string) {
+  public Connect(trip_id: string, driver_id: string) {
     if (this.ws) {
       console.log("Already socket ");
       return
     }
 
     console.log("Creating websocket")
-    this.ws = new WebSocket(`ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=test_driver`, "ws");
+    const url = `ws://10.0.2.2:3080/ws/driver/${trip_id}?driver_id=${driver_id}`;
+    this.ws = new WebSocket(encodeURI(url), "ws");
     this.ws.onopen = this._onWsOpen;
     this.ws.onmessage = this._onWsMessage;
     this.ws.onerror = this._onWsError;

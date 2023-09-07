@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
-import React, { Component } from 'react';
+import React from 'react';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../redux/hook';

@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/self-closing-comp */
 import React from 'react';
-import {StyleSheet, View, Text, Pressable} from 'react-native';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 const Revenue = () => {
   const handlePress = () => {
@@ -13,17 +13,17 @@ const Revenue = () => {
     <View>
       <Pressable
         onPress={handlePress}
-        style={({pressed}) => [
+        style={({ pressed }) => [
           styles.revenueButton,
-          {backgroundColor: pressed ? '#F9F9F9' : '#F9F9F9'},
+          { backgroundColor: pressed ? '#F9F9F9' : '#F9F9F9' },
         ]}>
-        {({pressed}) => (
+        {({ pressed }) => (
           <View style={styles.revenueWrapper}>
             <Icon name="bar-chart-2" color={'#2F2F2C'} size={24} />
             <Text
               style={[
                 styles.buttonText,
-                {color: pressed ? '#2F2F2C' : '#2F2F2C'},
+                { color: pressed ? '#2F2F2C' : '#2F2F2C' },
               ]}>
               Thu nhập
             </Text>
@@ -54,12 +54,8 @@ const styles = StyleSheet.create({
     width: 130,
     marginLeft: 20,
     justifyContent: 'center',
-    // shadowColor: 'rgba(46, 229, 157, 0.4)',
-    // shadowOpacity: 1.5,
     elevation: 8,
     shadowColor: 'black',
-    // shadowRadius: 20,
-    // shadowOffset: {width: 1, height: 13},
   },
   buttonText: {
     fontSize: 16,
