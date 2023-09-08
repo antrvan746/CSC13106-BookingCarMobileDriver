@@ -60,7 +60,7 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
 
       console.log("Going to payment")
       try {
-        GlobalServices.RideWs.Close();
+        // GlobalServices.RideWs.Close();
         navigation.navigate('Payment', { paymentId: '1238721267' });
       } catch (e) {
         console.log(e);

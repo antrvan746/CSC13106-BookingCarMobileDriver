@@ -1,5 +1,5 @@
 const NEXT_SERVER_URL = 'http://10.0.2.2:3000';
-export const GO_SERVER_URL = 'http://10.0.2.2:3080';
+export const GO_SERVER_URL = 'http://10.0.2.2:3083';
 
 export function getDriverInfoEndpoint(driver_phone: string, id?: string) {
   const encodedPhone = encodeURIComponent(driver_phone)
