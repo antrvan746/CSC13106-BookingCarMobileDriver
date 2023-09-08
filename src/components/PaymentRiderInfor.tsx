@@ -2,19 +2,21 @@
 import { Text, View, StyleSheet } from 'react-native';
 import React, { Component } from 'react';
 import PaymentMethod from './PaymentMethod';
+import { useUserData } from '../contexts/UserDataContext';
 
-export class PaymentRiderInfor extends Component {
-  render() {
-    return (
-      <View>
-        <View style={styles.wrapper}>
-          // TODO: MAP rider data
-          <Text style={styles.riderName}>Nguyễn Ngọc Anh Thư</Text>
-          <PaymentMethod />
-        </View>
+function PaymentRiderInfor({ name }: { name: string }) {
+
+
+  return (
+    <View>
+      <View style={styles.wrapper}>
+        {/* // TODO: MAP rider data */}
+        <Text style={styles.riderName}>{name}</Text>
+        <PaymentMethod />
       </View>
-    );
-  }
+    </View>
+  );
+
 }
 
 const styles = StyleSheet.create({

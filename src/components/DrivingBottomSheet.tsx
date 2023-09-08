@@ -43,10 +43,13 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
       buttonText = 'Đã đón';
       GlobalServices.RideWs.SendMessage("DriverArrivePick");
       dispatch(setDrivingScreenState({ state: 'Arrived' }));
+
     } else if (drivingScreenState.state === 'Arrived') {
+
       buttonText = 'Đã trả';
       GlobalServices.RideWs.SendMessage("DriverStratTrip");
       dispatch(setDrivingScreenState({ state: 'Carrying' }));
+
     } else if (drivingScreenState.state === 'Carrying') {
       buttonText = 'Đã đến';
       GlobalServices.RideWs.SendMessage("DriverArriveDrop");
@@ -54,7 +57,14 @@ function BottomSheet2({ navigation, route }: Props): JSX.Element {
       dispatch(setDrivingScreenState({ state: 'Finished' }));
       dispatch(setDrivingScreenState({ state: 'Arriving' }));
       dispatch(setPaymentScreenState({ state: 'InProgress' }));
-      navigation.navigate('Payment', { paymentId: '1238721267' });
+
+      console.log("Going to payment")
+      try {
+        GlobalServices.RideWs.Close();
+        navigation.navigate('Payment', { paymentId: '1238721267' });
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 

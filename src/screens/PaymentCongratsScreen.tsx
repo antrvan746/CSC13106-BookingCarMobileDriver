@@ -11,6 +11,7 @@ import FinishButton from '../components/FinishButton';
 // Navigations
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/Screen';
+import { useUserData } from '../contexts/UserDataContext';
 interface Props extends NativeStackScreenProps<RootStackParamList, 'CongratsPayment'> {
 
 }
@@ -19,7 +20,16 @@ const PaymentCongratsScreen = ({ navigation, route }: Props): JSX.Element => {
   const handleFinishTripButtonPress = () => {
     navigation.replace('Main');
   }
+  const { tripData } = useUserData();
+  function formatPrice(price: number) {
+    // Format the price with decimal places and add "đ" at the end
+    const formattedPrice = price.toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
 
+    return formattedPrice;
+  }
   return (
     <View style={styles.wrapper}>
       <View style={styles.paymentCongratsHeader}>
@@ -33,7 +43,7 @@ const PaymentCongratsScreen = ({ navigation, route }: Props): JSX.Element => {
       </View>
       <View style={styles.revenueWrapper}>
         <Text style={styles.revenueTitleText}>Thu nhập ròng</Text>
-        <Text style={styles.revenueContentText}>139.000đ</Text>
+        <Text style={styles.revenueContentText}>{formatPrice((tripData?.price || 0) * 1000)}</Text>
         <View style={styles.paymentMethodComponent}>
           <PaymentMethod />
         </View>

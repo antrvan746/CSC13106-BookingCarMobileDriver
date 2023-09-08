@@ -1,16 +1,19 @@
 /* eslint-disable prettier/prettier */
-import {Text, View, StyleSheet} from 'react-native';
-import React, {Component} from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
+import { useUserData } from '../contexts/UserDataContext';
 
-export class PaymentTotalCost extends Component {
-  render() {
-    return (
-      <View style={styles.wrapper}>
-        <Text style={styles.totalText}>Tổng cộng</Text>
-        <Text style={styles.totalCostText}>139.000đ</Text>
-      </View>
-    );
-  }
+export function PaymentTotalCost({ money }: { money: string }) {
+
+
+
+  return (
+    <View style={styles.wrapper}>
+      <Text style={styles.totalText}>Tổng cộng</Text>
+      <Text style={styles.totalCostText}>{money}</Text>
+    </View>
+  );
+
 }
 
 const styles = StyleSheet.create({

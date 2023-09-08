@@ -38,7 +38,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
   const [routeTrigger, routing] = useLazyGetRouteQuery();
   const [toPickRoute, setToPickRoute] = useState<{ latitude: number, longitude: number }[]>([]);
   const [toDropRoute, setToDropRoute] = useState<{ latitude: number, longitude: number }[]>([]);
-  const { driverData, vehicleData } = useUserData();
+  const { driverData } = useUserData();
   const [currentLocation, setCurrentLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -69,10 +69,6 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
 
   useEffect(() => {
     getCurrentLocation();
-    GlobalServices.RideWs.client_listeners.onDriverFound = (d) => {
-      console.log(`Pick up data lat:${d.slat}, lon:${d.slon}, adr:${d.sadr})`);
-      console.log(`Drop off data lat:${d.elat}, lon:${d.elon}, adr:${d.eadr})`);
-    }
     GlobalServices.RideWs.Connect(route.params.trip_data.trip_id, driverData?.id || "test_driver");
   }, []);
 
@@ -81,6 +77,7 @@ const DrivingScreen = ({ navigation, route }: Props): JSX.Element => {
     if (event.nativeEvent.coordinate) {
       const { latitude, longitude } = event.nativeEvent.coordinate;
       const geoHash = GlobalServices.GeoHash.encode(latitude, longitude, 4);
+
       if (!currentLocation?.latitude || !currentLocation.longitude) {
         setCurrentLocation({ latitude, longitude });
         updateDriverLocation(driverData?.id, latitude, longitude);
