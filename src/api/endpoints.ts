@@ -1,5 +1,5 @@
 const NEXT_SERVER_URL = 'http://10.0.2.2:3000';
-export const GO_SERVER_URL = 'http://10.0.2.2:3083';
+const GO_SERVER_URL = 'http://10.0.2.2:3581';
 
 export function getDriverInfoEndpoint(driver_phone: string, id?: string) {
   const encodedPhone = encodeURIComponent(driver_phone)
@@ -21,5 +21,5 @@ export function createVehicleEnpoint() {
 }
 
 export function sendLocationEndpoint(driver_data_id: string) {
-  return encodeURI(`${GO_SERVER_URL}/loc/driver/${driver_data_id || "test_driver"}`);
+  return encodeURI(`${GO_SERVER_URL}/ridehail/geo/loc/driver/${driver_data_id || "test_driver"}`);
 }

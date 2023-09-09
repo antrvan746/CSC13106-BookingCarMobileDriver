@@ -1,4 +1,4 @@
-import { GO_SERVER_URL, getDriverInfoEndpoint, getVehicleInforEndpoint, createDriverEndpoint, createVehicleEnpoint, sendLocationEndpoint } from './endpoints';
+import { getDriverInfoEndpoint, getVehicleInforEndpoint, createDriverEndpoint, createVehicleEnpoint, sendLocationEndpoint } from './endpoints';
 
 export async function getDriverInfo(driver_phone: string) {
   try {
@@ -106,7 +106,7 @@ export async function createVehicle(driver_id: string, plate_number: string,
 
 export async function updateDriverLocation(driverId: string | undefined, latitude: number, longitude: number) {
   try {
-    const response = await fetch(`${GO_SERVER_URL}/loc/driver/${driverId || "test_driver"}`, {
+    const response = await fetch(sendLocationEndpoint(driverId || "test_driver"), {
       method: 'POST',
       headers: {
         Accept: '*',

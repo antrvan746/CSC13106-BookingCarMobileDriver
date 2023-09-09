@@ -58,7 +58,7 @@ class RideWs {
     }
 
     console.log("Creating websocket")
-    const url = `ws://10.0.2.2:3081/ws/driver/${trip_id}?driver_id=${driver_id}`;
+    const url = `ws://10.0.2.2:3581/ridehail/trip/ws/driver/${trip_id}?driver_id=${driver_id}`;
     this.ws = new WebSocket(encodeURI(url), "ws");
     this.ws.onopen = this._onWsOpen;
     this.ws.onmessage = this._onWsMessage;
