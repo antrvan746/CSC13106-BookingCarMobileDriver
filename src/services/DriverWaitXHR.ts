@@ -35,7 +35,7 @@ class DriverWaitXHR {
 
   private async _reqloop(geoHash: string) {
     this.isRunning = true
-    const res = await fetch(`http://10.0.2.2:3581/ridehail/sse/xhr/driver/${geoHash}`, {
+    const res = await fetch(`http://10.0.2.2:8080/ridehail/sse/xhr/driver/${geoHash}`, {
       method: "GET",
     });
     if (res.status == 200) {
