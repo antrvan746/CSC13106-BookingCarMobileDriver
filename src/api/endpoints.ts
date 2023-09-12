@@ -2,10 +2,9 @@ const NEXT_SERVER_URL = 'http://10.0.2.2:3080';
 const GO_SERVER_URL = 'http://10.0.2.2:8080';
 
 export function getDriverInfoEndpoint(driver_phone: string, id?: string) {
-  const encodedPhone = encodeURIComponent(driver_phone)
-  const url = `${NEXT_SERVER_URL}/api/drivers/${id || "No_id"}?phone=${encodedPhone}`;
-  console.log(encodeURI(driver_phone))
-  return encodeURI(url);
+  const encodedPhone = driver_phone.replace("+84","0");
+  const url = 'http://10.0.2.2:3080/api/drivers/No_id?phone=' + encodedPhone;
+  return url.replace(" ","");
 }
 
 export function getVehicleInforEndpoint(driver_id: string) {

@@ -2,21 +2,28 @@ import { getDriverInfoEndpoint, getVehicleInforEndpoint, createDriverEndpoint, c
 
 export async function getDriverInfo(driver_phone: string) {
   try {
-    const response = await fetch(getDriverInfoEndpoint(driver_phone), {
-      method: 'GET',
+    const url = getDriverInfoEndpoint(driver_phone);
+    console.log("Get driver info:", url);
+    console.log("Get driver info2:", url[0]);
+
+    const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+      }
     });
 
     if (!response.ok) {
       const responseData = await response.json();
+      console.log("Get driver acc: ", responseData);
+
       console.error('Server returned an error (getting driver info): ', responseData);
       return null;
     }
 
     const responseData = await response.json();
-
+    console.log("Get driver acc: ", responseData);
     return responseData;
   } catch (error) {
     console.error('Error during getting driver info:', error);
@@ -57,7 +64,7 @@ export async function createDriver(name: string, phone: string, email: string) {
       },
       body: JSON.stringify({
         name,
-        phone: phone,
+        phone: phone.replace("+84", "0"),
         email,
         password: "",
       }),
